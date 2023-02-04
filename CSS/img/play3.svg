@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg enable-background="new 0 0 379 379" version="1.1" viewBox="0 0 379 379" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+	<style>
+		.icon-color {
+			fill: #fff;
+		}
+    </style>
+	<path class="icon-color" d="m323.5 55.5c-74-74-194-74-268 0s-74 194 0 268 194 74 268 0 74-194 0-268zm-51.2 145.6l-59.2 34-58 33.6c-2 1.6-4.8 2.4-7.6 2.4-7.6 0-13.6-6-13.6-13.6v-136.4c0-2.4 0.4-4.4 1.6-6.8 3.6-6.4 12-8.8 18.4-4.8l58.4 33.6c0.4 0 0.4 0.4 0.8 0.4l59.2 34c2 1.2 3.6 2.8 5.2 4.8 3.6 6.8 1.2 15.2-5.2 18.8z"/>
+</svg>
