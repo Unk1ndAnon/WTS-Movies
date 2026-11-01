@@ -12,7 +12,7 @@ if (isset($_GET['page'])) {
 
 
 $ambil = tmdb_fetch_url($topratedmovies);
-$tprtdmvs = json_decode($ambil, true);
+$tprtdmvs = json_decode($ambil ?: '{}', true) ?: ['results' => []];
 /*----meta---*/
 $canonical = "top-rated-movies";
 $metatitle = 'Top Rated Movies | TStream WATCH';

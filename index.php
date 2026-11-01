@@ -11,8 +11,8 @@ $trendingtv = $APIbaseURL . $trendingtvweek . $api_key . $language;
 
 $ambil = tmdb_fetch_url($trendingmovies);
 $ambiltv = tmdb_fetch_url($trendingtv);
-$trndngmvs = json_decode($ambil, true);
-$trndngtv = json_decode($ambiltv, true);
+$trndngmvs = json_decode($ambil ?: '{}', true) ?: ['results' => []];
+$trndngtv = json_decode($ambiltv ?: '{}', true) ?: ['results' => []];
 /*----meta---*/
 $metatitle = 'Watch Movies and TV Shows Online | TStream WATCH';
 $metadesc = 'Discover trending movies, popular films and TV series. Explore new releases, ratings, cast details and episodes on TStream WATCH.';

@@ -9,7 +9,7 @@ if (isset($_GET['page'])) {
 }
 
 $ambil = tmdb_fetch_url($trendingtv);
-$trndngtv = json_decode($ambil, true);
+$trndngtv = json_decode($ambil ?: '{}', true) ?: ['results' => []];
 /*----meta---*/
 $canonical = "trending-tv";
 $metatitle = 'Trending TV Shows This Week | TStream WATCH';

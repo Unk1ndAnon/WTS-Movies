@@ -9,7 +9,7 @@ if (isset($_GET['page'])) {
 }
 
 $ambil = tmdb_fetch_url($populartv);
-$pplrtv = json_decode($ambil, true);
+$pplrtv = json_decode($ambil ?: '{}', true) ?: ['results' => []];
 /*----meta---*/
 $canonical = "tv";
 $metatitle = 'Popular TV Shows and Series | TStream WATCH';

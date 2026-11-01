@@ -11,7 +11,7 @@ if (isset($_GET['page'])) {
 
 
 $ambil = tmdb_fetch_url($popularmovies);
-$pplrmvs = json_decode($ambil, true);
+$pplrmvs = json_decode($ambil ?: '{}', true) ?: ['results' => []];
 /*----meta---*/
 $canonical = "movies";
 $metatitle = 'Popular Movies to Watch Online | TStream WATCH';
