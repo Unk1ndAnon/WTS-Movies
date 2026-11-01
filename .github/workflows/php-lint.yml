@@ -2,7 +2,7 @@ name: PHP syntax check
 
 on:
   push:
-    branches: [tstream-watch-upgrade]
+    branches: [main, tstream-watch-upgrade, 'fix/**']
   pull_request:
     branches: [main]
 
@@ -18,3 +18,6 @@ jobs:
           php-version: '8.3'
       - name: Lint PHP files
         run: find . -type f -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Check JavaScript syntax
+        run: node --check JS/main.js
