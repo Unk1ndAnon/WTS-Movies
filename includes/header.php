@@ -1,12 +1,21 @@
 <?php
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/functions.php';
-if (!isset($metatitle) || trim((string)$metatitle) === '') $metatitle = SITE_NAME . ' - Watch Movies & TV Shows';
-if (!isset($metadesc) || trim((string)$metadesc) === '') $metadesc = 'Discover movies and TV series on TStream WATCH. Explore trending titles, new releases and popular shows.';
-if (!isset($metaimg) || trim((string)$metaimg) === '') $metaimg = site_url('img/home.jpg');
+
+if (!isset($metatitle) || trim((string)$metatitle) === '') {
+    $metatitle = SITE_NAME . ' - Watch Movies & TV Shows';
+}
+if (!isset($metadesc) || trim((string)$metadesc) === '') {
+    $metadesc = 'Discover movies and TV series on TStream WATCH. Explore trending titles, new releases, ratings, cast details and episodes.';
+}
+if (!isset($metaimg) || trim((string)$metaimg) === '') {
+    $metaimg = site_url('img/home.jpg');
+}
 $metaimg = (string)$metaimg;
 $robots = $robots ?? 'index,follow';
 $ogtype = $ogtype ?? 'website';
+$isHomePage = basename((string)($_SERVER['SCRIPT_NAME'] ?? '')) === 'index.php';
+
 if (!isset($canonical) || trim((string)$canonical) === '') {
     $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
     $canonical = trim($requestPath, '/');
@@ -46,34 +55,46 @@ $canonicalUrl = site_url($canonicalPath);
 <link rel="manifest" href="/favicon/site.webmanifest">
 <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
 <link rel="preconnect" href="https://api.themoviedb.org">
-<link rel="stylesheet" href="/CSS/style.css?v=2.1">
+<link rel="stylesheet" href="/CSS/style.css?v=2.2">
 <?php if (!empty($metaschema)) echo $metaschema; ?>
 </head>
-<body>
+<body class="<?= $isHomePage ? 'home-page' : 'inner-page' ?>">
 <div id="data-container">
 <header class="responsive tstream-header">
-  <button id="menubtn" class="nav" type="button" aria-label="Open navigation" aria-expanded="false"><i class="fa fa-bars" aria-hidden="true"></i></button>
-  <div class="logo"><a href="/" aria-label="TStream WATCH home"><img src="/img/logo.svg" alt="TStream WATCH" width="190" height="48"></a></div>
-  <button id="searchbtn" class="search" type="button" aria-label="Open search" aria-expanded="false"><i class="fa fa-search" aria-hidden="true"></i></button>
+  <button id="menubtn" class="nav" type="button" aria-label="Open navigation" aria-expanded="false">
+    <i class="fa fa-bars" aria-hidden="true"></i>
+  </button>
+
+  <div class="logo">
+    <a href="/" aria-label="TStream WATCH home">
+      <img src="/img/logo.svg" alt="TStream WATCH" width="190" height="48">
+    </a>
+  </div>
+
+  <div id="arch-menu" class="menuresp">
+    <nav class="menu" aria-label="Main navigation">
+      <ul class="resp">
+        <li><a href="/" <?= $isHomePage ? 'aria-current="page"' : '' ?>>Home</a></li>
+        <li><a href="/movies">Movies</a></li>
+        <li><a href="/trending-movies">Trending</a></li>
+        <li><a href="/top-rated-movies">Top Rated</a></li>
+        <li><a href="/tv">TV Shows</a></li>
+        <li><a href="/trending-tv">TV Trending</a></li>
+        <li><a href="/top-rated-tv">TV Top Rated</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="search_responsive">
+    <form method="get" id="form-search-resp" class="form-resp-ab" action="/search" role="search">
+      <label class="sr-only" for="keyword">Search movies and TV shows</label>
+      <input type="search" class="footer_search_input" placeholder="Search movies and TV shows..." name="keyword" id="keyword" autocomplete="off">
+      <button type="submit" class="search-submit" aria-label="Submit search"><i class="fa fa-search" aria-hidden="true"></i></button>
+    </form>
+    <div class="live-search" id="header_search_autocomplete" aria-live="polite"></div>
+  </div>
+
+  <button id="searchbtn" class="search" type="button" aria-label="Open search" aria-expanded="false">
+    <i class="fa fa-search" aria-hidden="true"></i>
+  </button>
 </header>
-<div class="search_responsive">
-  <form method="get" id="form-search-resp" class="form-resp-ab" action="/search">
-    <label class="sr-only" for="keyword">Search movies and TV shows</label>
-    <input type="search" class="footer_search_input" placeholder="Search movies and TV shows..." name="keyword" id="keyword" autocomplete="off">
-    <button type="submit" class="search-submit">Search</button>
-  </form>
-  <div class="live-search" id="header_search_autocomplete" aria-live="polite"></div>
-</div>
-<div id="arch-menu" class="menuresp">
-  <nav class="menu" aria-label="Main navigation">
-    <ul class="resp">
-      <li><a href="/"><i class="fas fa-home" aria-hidden="true"></i><div class="mvs">Home</div></a></li>
-      <li><a href="/movies"><i class="fas fa-film" aria-hidden="true"></i><div class="mvs">Movies</div></a></li>
-      <li><a href="/trending-movies"><i class="fas fa-chart-line" aria-hidden="true"></i><div class="mvs">Trending Movies</div></a></li>
-      <li><a href="/top-rated-movies"><i class="fas fa-star" aria-hidden="true"></i><div class="mvs">Top Rated Movies</div></a></li>
-      <li><a href="/tv"><i class="fas fa-tv" aria-hidden="true"></i><div class="mvs">TV Shows</div></a></li>
-      <li><a href="/trending-tv"><i class="fas fa-chart-line" aria-hidden="true"></i><div class="mvs">Trending TV Shows</div></a></li>
-      <li><a href="/top-rated-tv"><i class="fas fa-star" aria-hidden="true"></i><div class="mvs">Top Rated TV Shows</div></a></li>
-    </ul>
-  </nav>
-</div>
