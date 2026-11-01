@@ -107,7 +107,7 @@
         if (event.key === 'Escape') hide();
         if (event.key === 'Enter' && searchInput.value.trim().length >= 2) {
           event.preventDefault();
-          window.location.href = '/search/' + encodeURIComponent(searchInput.value.trim().replace(/\s+/g, '-'));
+          window.location.href = '/search?keyword=' + encodeURIComponent(searchInput.value.trim());
         }
       });
       document.addEventListener('click', (event) => {
