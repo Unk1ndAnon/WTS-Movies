@@ -13,6 +13,11 @@ $title = (string)($currentmovie['title'] ?? 'Movie');
 $year = !empty($currentmovie['release_date']) ? substr((string)$currentmovie['release_date'], 0, 4) : '';
 $slug = slugify($title);
 $path = '/movies/' . $id . '/' . $slug;
+$requestedSlug = (string)($_GET['slug'] ?? '');
+if ($requestedSlug !== $slug) {
+    header('Location: ' . site_url(ltrim($path, '/')), true, 301);
+    exit;
+}
 $canonical = $path;
 $ogtype = 'video.movie';
 $metatitle = $title . ($year ? " ({$year})" : '') . ' - Watch on ' . SITE_NAME;
