@@ -69,7 +69,7 @@ $canonical = '';
       <p><?= e($heroOverview !== '' ? $heroOverview : 'Explore the latest movies and series, hand-picked from what is trending right now.') ?></p>
       <?php if ($heroId > 0): ?>
       <div class="ott-hero-actions">
-        <a class="ott-watch-button" href="/movies/<?= $heroId ?>/<?= e($heroSlug) ?>">
+        <a class="ott-watch-button" href="/movies/<?= $heroId ?>/<?= e($heroSlug) ?>#player">
           <i class="fa fa-play" aria-hidden="true"></i> Watch Now
         </a>
         <a class="ott-info-button" href="/movies/<?= $heroId ?>/<?= e($heroSlug) ?>">More Info</a>
