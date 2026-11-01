@@ -1,0 +1,6 @@
+/includes/config.local.php
+/storage/cache/*
+!/storage/cache/.gitkeep
+*.log
+.DS_Store
+Thumbs.db

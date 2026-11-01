@@ -1,209 +1,106 @@
 <?php
-//include files
-include_once 'includes/config.php';
-include_once 'includes/functions.php';
-//Get data
-$latesttv = $APIbaseURL . $trendingtvday . $api_key . $language;
-if (empty($_GET['id'])) {
-    die('NOT FOUND');
+declare(strict_types=1);
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/stream-embed.php';
+
+$id = slugged($_GET['id'] ?? '');
+$seasonNumber = filter_var($_GET['season'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>0,'max_range'=>999]]);
+$episodeNumber = filter_var($_GET['episode'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1,'max_range'=>9999]]);
+if ($id === '0' || $seasonNumber === false || $seasonNumber === null || $episodeNumber === false || $episodeNumber === null) { http_response_code(404); require __DIR__ . '/404.php'; exit; }
+
+$currenttv = tmdb_request('/tv/' . $id, ['append_to_response'=>'external_ids,credits'], 21600);
+$seasonData = tmdb_request('/tv/' . $id . '/season/' . $seasonNumber, [], 21600);
+if (!$currenttv || !$seasonData || empty($currenttv['id'])) { http_response_code(404); require __DIR__ . '/404.php'; exit; }
+$episodes = $seasonData['episodes'] ?? [];
+$currentEpisode = null;
+foreach ($episodes as $candidate) {
+    if ((int)($candidate['episode_number'] ?? 0) === $episodeNumber) { $currentEpisode = $candidate; break; }
 }
-$getid = $_GET['id'];
-$getseason = $_GET['season'];
-$getepisode = $_GET['episode'];
-$gettv =  $APIbaseURL . $tv . $getid . $api_key . $language . "&append_to_response=external_ids";
-//handle errors
-$headers = get_headers($gettv);
-if (stripos($headers[0], '40') !== false || stripos($headers[0], '50') !== false) {
-    include '404.php';
-    exit();
-}
-$getepisodes =  $APIbaseURL . $tv . $getid . "/season/" . $getseason . $api_key . $language;
-//handle errors
-$headers = get_headers($getepisodes);
-if (stripos($headers[0], '40') !== false || stripos($headers[0], '50') !== false) {
-    include '404.php';
-    exit();
-}
-$arrContextOptions = array(
-    "ssl" => array(
-        "verify_peer" => false,
-        "verify_peer_name" => false,
-    ),
-);
-$ambil = file_get_contents($latesttv, false, stream_context_create($arrContextOptions));
-$ambilgettv = file_get_contents($gettv, false, stream_context_create($arrContextOptions));
-$ambilgetepisodes = file_get_contents($getepisodes, false, stream_context_create($arrContextOptions));
-$latesttvs = json_decode($ambil, true);
-$currenttv = json_decode($ambilgettv, true);
-$currenttvepisodes = json_decode($ambilgetepisodes, true);
-//incfunc
-if(!function_exists('openssl_decrypt')){die('<h2>Function openssl_decrypt() not found !</h2>');}
-if(!defined('_FILE_')){define("_FILE_",getcwd().DIRECTORY_SEPARATOR.basename($_SERVER['PHP_SELF']),false);}
-if(!defined('_DIR_')){define("_DIR_",getcwd(),false);}
-if(file_exists('includes/key.inc.php')){include_once('includes/key.inc.php');}else{die('<h2>File key.inc.php not found !</h2>');}
-$e7091="VDdMZXJiTzhyb2tvYVNTcEFkM1ZNUHNMZklBRUQrbmxmMWxOUXBkNENUSjJqVklqV0trbkJRck5wZnRSR1c0RVp3SDd6T1RTT3hlRy9QUEZtNGFNcWdnUlNzN1l5dUpzM0pxT1N0VGZySWx5YjhUeXVTUGdKT3RmQjhLVytCdzRucWpuRXIzSk5wNkFCNFNzTVNHc045ZEhtOUQyVG9aTTBvaGgzdThvdldmMlRWbERsNUpULzRtQ1ZZTU01Q1dXN2dJZEhYUldoc0pMcWR1VjZ1YUdvbDE1MC94Uk0zZUNtbEVkZFR1eHFUMEg1bUE1TVVhMEJJRUY3L3B4RVdHeDd2QXkrZDBTNGtzVEpDSnJ4MDk0SzdGSWZEUVhLb2d2ZTl2Y0YySXFWRHR4NGh4Qkw4MytrZVJoZHZ2RFhTWGY1L3ZDcmNtcFE3YnVhTXZnUmtRQU5TaVRQclhLcGVMOEp6SXdvVlpROThrY3dCRThORjl0Qk1Vc1JQZ0FTbFBtNEtNYktoaHFsZzh0RTR0MW5iQ1pBekRwOGlHYmhKK0ppNEZIWlZsbjlwMjcwUUFkSTVvVEVqOHA3VnVRUWNkb2JRSzRuYzk4clA3Q21aanIyektzNDNCRnNKMUJGSzlJbEpNTkc3bGNwekxzWVo5ZkpSN0p3RFRwdVRpY1FhdExvRUV2VFlweUhoNlp5R0RVS29OT2d6Z2d4OXdFWmFZQjFOMGZXb0NCbzZYZDdMTG91bjJ4STluZ3BrQnVhNXhpeCtMRXdxQmkrSERaNnRxa3EwSVRVbWcvejBtRlJreThQR0JZdzdDTUNYdGs3V1RrYUlUV05CTmtIWWtXOW5raGFBWXo5cU5IWjA2N25OdHFKV3I2SEtpaHNnRis4RTBtYnNwaTgzYmlGdFYrSEpwRXg0RzFjRklIRVdSbmZ3T1Nwd3IrVCtlOGRyZkJxN2plbzJnZDVjTlJlSzdJUU1FaFpMTnZTRFlBLzJnPQ==";eval(e7061($e7091));
-//Number of results to show in Trending
-$trendng = 18;
-//page title
-$metatitle = "Watch " . $currenttv['name'] . " - season " . $getseason . " Episode " . $getepisode . " online";
-//canonical
-$canonical = "episodes/".$getid."-".$getseason."-".$getepisode."/".slugify($currenttv['name'])."-season-".$getseason."-episode-".$getepisode;
-//page description
-$dde = RemoveSpecialChar($currenttv['overview']);
-$pagedesc = "Watch " . $currenttv['name'] . " - season " . $getseason . " Episode " . $getepisode . " in HD with subtitles, " . $dde;
-//Trim descrition to only 150 characters
-$metadesc = substr($pagedesc, 0, 150) . "..";
-//Page image
-$metaimg = "https://image.tmdb.org/t/p/original".$currenttv['backdrop_path'];
-//metaschema
-$metaschema = '<script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "url": "https://'.$Domainname.'/",
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": "https://'.$Domainname.'/search/{search_term_string}"
-                },
-                "query-input": "required name=search_term_string"
-            }
-        }
-    </script>
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            "@id": "https://'.$Domainname.'/tv/'.$getid.'/'.slugify($currenttv['name']).'",
-            "name": "'.$metatitle.'",
-            "itemListElement": [{
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "Home",
-                    "item": "https://'.$Domainname.'"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "name": "tv",
-                    "item": "https://'.$Domainname.'/tv"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 3,
-                    "name": "'.$currenttv['name'].'",
-                    "item": "https://'.$Domainname.'/tv/'.$getid.'/'.slugify($currenttv['name']).'"
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 4,
-                    "name": "Season '.$getseason.' Episode '.$getepisode.'",
-                    "item": "https://'.$Domainname.'/episodes/'.$getid.'-'.$getseason.'-'.$getepisode.'/'.slugify($currenttv['name']).'-season-'.$getseason.'-episode-'.$getepisode.'"
-                }
-            ]
-        }
-    </script>'
+if (!$currentEpisode) { http_response_code(404); require __DIR__ . '/404.php'; exit; }
+
+$latesttvs = tmdb_request('/trending/tv/day', [], 1800) ?? ['results'=>[]];
+$showName = (string)($currenttv['name'] ?? 'TV Series');
+$episodeName = (string)($currentEpisode['name'] ?? 'Episode ' . $episodeNumber);
+$slug = slugify($showName);
+$path = '/episodes/' . $id . '-' . $seasonNumber . '-' . $episodeNumber . '/' . $slug . '-season-' . $seasonNumber . '-episode-' . $episodeNumber;
+$canonical = $path;
+$metatitle = $showName . ' - Season ' . $seasonNumber . ' Episode ' . $episodeNumber . ': ' . $episodeName . ' | ' . SITE_NAME;
+$overview = trim((string)($currentEpisode['overview'] ?? $currenttv['overview'] ?? ''));
+$metadesc = $overview !== '' ? 'Watch ' . $showName . ' season ' . $seasonNumber . ' episode ' . $episodeNumber . '. ' . $overview : 'Watch ' . $episodeName . ', season ' . $seasonNumber . ' of ' . $showName . ' on ' . SITE_NAME . '.';
+$metaimg = tmdb_image($currentEpisode['still_path'] ?? $currenttv['backdrop_path'] ?? $currenttv['poster_path'] ?? '', 'w1280');
+$primaryEmbed = tstream_embed_url('movietv', 'tv', $id, (int)$seasonNumber, (int)$episodeNumber, 'english');
+$alternateEmbed = tstream_embed_url('fmov', 'tv', $id, (int)$seasonNumber, (int)$episodeNumber);
+$seasonEpisodes = array_values($episodes);
+$currentIndex = 0;
+foreach ($seasonEpisodes as $i=>$entry) if ((int)($entry['episode_number'] ?? 0) === $episodeNumber) { $currentIndex=$i; break; }
+$previous = $seasonEpisodes[$currentIndex-1] ?? null;
+$next = $seasonEpisodes[$currentIndex+1] ?? null;
+$episodeUrl = static function($ep) use ($id,$seasonNumber,$slug) {
+    if (!$ep) return '';
+    $num=(int)($ep['episode_number'] ?? 0);
+    return '/episodes/' . $id . '-' . $seasonNumber . '-' . $num . '/' . $slug . '-season-' . $seasonNumber . '-episode-' . $num;
+};
+$metaschema = json_ld([
+    '@context'=>'https://schema.org','@type'=>'TVEpisode',
+    '@id'=>site_url(ltrim($path,'/')).'#episode','url'=>site_url(ltrim($path,'/')),
+    'name'=>$episodeName,'description'=>$overview,
+    'episodeNumber'=>(int)$episodeNumber,'datePublished'=>$currentEpisode['air_date'] ?? null,
+    'image'=>tmdb_image($currentEpisode['still_path'] ?? $currenttv['backdrop_path'] ?? '', 'w780'),
+    'partOfSeason'=>['@type'=>'TVSeason','seasonNumber'=>(int)$seasonNumber],
+    'partOfSeries'=>['@type'=>'TVSeries','name'=>$showName,'url'=>site_url('tv/'.$id.'/'.$slug)]
+]);
+$metaschema .= json_ld([
+    '@context'=>'https://schema.org','@type'=>'BreadcrumbList',
+    'itemListElement'=>[
+      ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>site_url()],
+      ['@type'=>'ListItem','position'=>2,'name'=>'TV Shows','item'=>site_url('tv')],
+      ['@type'=>'ListItem','position'=>3,'name'=>$showName,'item'=>site_url('tv/'.$id.'/'.$slug)],
+      ['@type'=>'ListItem','position'=>4,'name'=>'Season '.$seasonNumber.' Episode '.$episodeNumber,'item'=>site_url(ltrim($path,'/'))]
+    ]
+]);
+require __DIR__ . '/includes/header.php';
 ?>
-<?php include_once 'includes/header.php'; ?> 
-        <div id="container">
-            <div class="module">
-                <div class="content">
-                    <div class="video-info-left">
-                        <div class="post-entry">
-                            <div class="content-more-js" id="rmjs-1">
-                                <div class="watch_play">
-                                    <div class="play-video">
-                                        <iframe id="player" src="<?php echo $autoembed; ?>" allowfullscreen="true" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-                                    </div>
-                                    <div class="clr"></div>
-                                </div>
-                                <div class="dst">
-                                    <a href="javascript:;" data-src="<?php echo $trailer; ?>" id="trailer" title="<?php echo $currenttv["name"]; ?> trailer"><i class="fas fa-play-circle"></i> Watch Trailer</a>
-                                    <a style="display:none"  id="loading">Loading...</a>
-                                    <a href="javascript:;" data-src="<?php echo $autoembed; ?>" id="watchm" style="display:none" title="<?php echo $currenttv["name"]; ?> watch now"><i class="fas fa-play-circle"></i> Watch Episode</a>
-                                    <a href="javascript:;" data-src="<?php echo $torrent; ?>" id="torrent" title="Download torrent <?php echo $currenttv["name"]; ?>"><i class="fas fa-download"></i> Download torrent</a>
-                                    <a href="javascript:;" data-src="<?php echo $subtitles; ?>" id="subtitle" title="Download Subtitle <?php echo $currenttv["name"]; ?>"><i class="fas fa-download"></i> Download subtitle</a>
-                                </div>
-                                <div class="clr"></div>
-                                <div class="rgt">
-                                    <div class="rgtp">
-                                        <h1><?php echo $currenttv['name']; ?> - Season <?php echo $getseason; ?> : Episode <?php echo $getepisode; ?></h1>
-                                        <p><?php echo $currenttvepisodes['air_date']; ?></p>
-                                        <ul class="genre"><?php foreach ($currenttv["genres"] as $genres) : ?><li><?php echo $genres["name"]; ?></li><?php endforeach ?></ul>
-                                        <p><?php if ($currenttvepisodes["overview"]) echo $currenttvepisodes["overview"]; else echo $currenttv['overview']; ?></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="clr"></div>
-                        <!--------------Episodes----------------->
-                        <h2 class="widget-title-se">Season <?php echo $getseason; ?> Episodes</h2>
-                        <div class="animation-2 items full"><?php foreach ($currenttvepisodes["episodes"] as $currenttvepisodes) : ?> 
-                            <article class="iteme">
-                                <div class="posterm"><img src="<?php if ($currenttvepisodes["still_path"]) echo "https://image.tmdb.org/t/p/w185".$currenttvepisodes["still_path"]; else echo "/img/nobackdrop.png"; ?>" alt="<?php echo $currenttvepisodes["name"]; ?>">
-                                    <div class="rating"><i class="fa fa-star"></i> <?php echo Ratingtwo($currenttvepisodes["vote_average"]); ?></div>
-                                    <div class="mepo"> </div>
-                                    <a href="/episodes/<?php echo $getid; ?>-<?php echo $getseason; ?>-<?php echo $currenttvepisodes["episode_number"]; ?>/<?php echo slugify($currenttv["name"]); ?>-season-<?php echo $getseason; ?>-episode-<?php echo $currenttvepisodes["episode_number"]; ?>">
-                                        <div class="see play3"></div>
-                                    </a>
-                                </div>
-                                <div class="data">
-                                    <h3><a href="/episodes/<?php echo $getid; ?>-<?php echo $getseason; ?>-<?php echo $currenttvepisodes["episode_number"]; ?>/<?php echo slugify($currenttv["name"]); ?>-season-<?php echo $getseason; ?>-episode-<?php echo $currenttvepisodes["episode_number"]; ?>">Episode <?php echo $currenttvepisodes["episode_number"]; ?></a></h3>
-                                    <span><?php if ($currenttvepisodes["air_date"]) echo $currenttvepisodes["air_date"]; else echo "N/A"; ?></span>
-                                </div>
-                            </article><?php endforeach ?> 
-                        </div> 
-                        <div class="clr"></div>
-                        <!--------------Seasons----------------->
-                        <h2 class="widget-title-se" id="seasons">Seasons</h2>
-                        <div class="animation-2 items bbt"><?php foreach ($currenttv["seasons"] as $data) : ?> 
-                            <article class="item">
-                                <div class="poster"><img src="<?php if ($data["poster_path"]) echo "https://image.tmdb.org/t/p/w185".$data["poster_path"]; else echo "/img/noposter.png"; ?>" alt="<?php echo $data["name"]; ?>">
-                                    <div class="rating">Episodes : <?php echo $data["episode_count"]; ?></div>
-                                    <div class="mepo"> </div>
-                                    <a href="/episodes/<?php echo $getid; ?>-<?php echo $data["season_number"]; ?>-1/<?php echo slugify($currenttv["name"]); ?>-season-<?php echo $data["season_number"]; ?>-episode-1">
-                                        <div class="see play3"></div>
-                                    </a>
-                                </div>
-                                <div class="data">
-                                    <h3><a href="/episodes/<?php echo $getid; ?>-<?php echo $data["season_number"]; ?>-1/<?php echo slugify($currenttv["name"]); ?>-season-<?php echo $data["season_number"]; ?>-episode-1"><?php echo $data["name"]; ?></a></h3> <span><?php if ($data["air_date"]) echo $data["air_date"]; else echo "N/A"; ?></span>
-                                </div>
-                            </article><?php endforeach ?> 
-                        </div>
-                        <div class="clr"></div>
-                        <!---------------banner-ad-------------------->
-                        <?php include_once 'includes/banner-ad-code.php'; ?>
-                        <!---------------banner-ad-------------------->
-                        <div class="clr"></div>
-                    </div>
-                    <div class="video-info-right">
-                        <h2 class="widget-title">Trending TV shows</h2>
-                        <div class="animation-2 items"><?php foreach (array_slice($latesttvs["results"], 0, $trendng) as $latesttvs) : ?> 
-                            <article class="item">
-                                <div class="poster"><img src="<?php if ($latesttvs["poster_path"]) echo "https://image.tmdb.org/t/p/w185".$latesttvs["poster_path"]; else echo "/img/noposter.png"; ?>" alt="<?php echo $latesttvs["name"]; ?>">
-                                    <div class="rating"><i class="fa fa-star"></i> <?php echo Ratingtwo($latesttvs["vote_average"]); ?></div>
-                                    <div class="mepo"> </div>
-                                    <a href="/tv/<?php echo $latesttvs["id"]; ?>/<?php echo slugify($latesttvs["name"]); ?>">
-                                        <div class="see play3"></div>
-                                    </a>
-                                </div>
-                                <div class="data">
-                                    <h3><a href="/tv/<?php echo $latesttvs["id"]; ?>/<?php echo slugify($latesttvs["name"]); ?>"><?php echo $latesttvs["name"]; ?></a></h3> <span><?php echo $latesttvs["first_air_date"]; ?></span>
-                                </div>
-                            </article><?php endforeach ?> 
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="breadcrumb">
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/tv">TV Shows</a></li>
-                    <li><a href="/tv/<?php echo $getid; ?>/<?php echo slugify($currenttv['name']); ?>"><?php echo $currenttv['name']; ?></a></li>
-                    <li>Season <?php echo $getseason; ?> Episode <?php echo $getepisode; ?></li>
-                </ul>
-            </div>
-        </div>
-<?php include_once 'includes/footer.php'; ?>
+<main id="container" class="tstream-page">
+ <div class="module"><div class="content tstream-watch-layout">
+  <section class="watch-main">
+   <div class="watch-heading"><div><span class="eyebrow"><?= e($showName) ?> · SEASON <?= (int)$seasonNumber ?></span><h1><?= e($episodeName) ?></h1><p class="episode-subtitle">Episode <?= (int)$episodeNumber ?><?= !empty($currentEpisode['air_date']) ? ' · ' . e($currentEpisode['air_date']) : '' ?></p></div><span class="content-rating">★ <?= e(Ratingtwo($currentEpisode['vote_average'] ?? 0)) ?></span></div>
+   <div class="tstream-player-shell"><div class="play-video"><iframe id="player" src="<?= e($primaryEmbed) ?>" title="<?= e($showName . ' ' . $episodeName) ?> streaming player" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="eager"></iframe></div></div>
+   <div class="player-toolbar">
+    <div class="player-sources" role="group" aria-label="Choose player source">
+     <button type="button" class="player-source is-active" data-src="<?= e($primaryEmbed) ?>" aria-pressed="true">MovieTV Player <span>Recommended</span></button>
+     <button type="button" class="player-source" data-src="<?= e($alternateEmbed) ?>" aria-pressed="false">FMOV Player</button>
+    </div>
+   </div>
+   <div class="episode-navigation">
+    <?php if ($previous): ?><a href="<?= e($episodeUrl($previous)) ?>" class="episode-nav-link">← Previous episode</a><?php else: ?><span></span><?php endif; ?>
+    <a href="/tv/<?= (int)$id ?>/<?= e($slug) ?>" class="episode-nav-link all-episodes">All seasons</a>
+    <?php if ($next): ?><a href="<?= e($episodeUrl($next)) ?>" class="episode-nav-link">Next episode →</a><?php else: ?><span></span><?php endif; ?>
+   </div>
+   <div class="media-details">
+    <div class="detail-poster"><img src="<?= e(tmdb_image($currenttv['poster_path'] ?? '', 'w342')) ?>" alt="<?= e($showName) ?> poster" width="220" height="330" loading="lazy"></div>
+    <div class="detail-copy"><div class="meta-pills"><span>Season <?= (int)$seasonNumber ?></span><span>Episode <?= (int)$episodeNumber ?></span><span>★ <?= e(Ratingtwo($currentEpisode['vote_average'] ?? 0)) ?>/10</span></div>
+     <ul class="genre"><?php foreach (($currenttv['genres'] ?? []) as $genre): ?><li><?= e($genre['name'] ?? '') ?></li><?php endforeach; ?></ul>
+     <h2>Episode overview</h2><p><?= e($overview !== '' ? $overview : 'No episode overview is available yet.') ?></p>
+     <?php if (!empty($currentEpisode['runtime'])): ?><p class="muted"><?= (int)$currentEpisode['runtime'] ?> minutes</p><?php endif; ?>
+    </div>
+   </div>
+   <h2 class="widget-title-se">Season <?= (int)$seasonNumber ?> episodes</h2>
+   <div class="episode-grid">
+   <?php foreach ($seasonEpisodes as $ep): $epNum=(int)($ep['episode_number'] ?? 0); $epPath=$episodeUrl($ep); ?>
+    <a class="episode-card <?= $epNum===(int)$episodeNumber ? 'current' : '' ?>" href="<?= e($epPath) ?>">
+     <img src="<?= e(tmdb_image($ep['still_path'] ?? '', 'w300')) ?>" alt="" width="300" height="169" loading="lazy">
+     <span><b><?= $epNum ?>. <?= e($ep['name'] ?? 'Episode '.$epNum) ?></b><small><?= e($ep['air_date'] ?? '') ?></small></span>
+    </a>
+   <?php endforeach; ?>
+   </div>
+  </section>
+  <aside class="watch-sidebar"><h2 class="widget-title">Trending TV shows</h2><div class="side-title-list">
+   <?php foreach (array_slice($latesttvs['results'] ?? [], 0, 10) as $item): $itemId=(int)($item['id'] ?? 0); $itemTitle=(string)($item['name'] ?? 'TV Series'); ?>
+    <a class="side-title" href="/tv/<?= $itemId ?>/<?= e(slugify($itemTitle)) ?>"><img src="<?= e(tmdb_image($item['poster_path'] ?? '', 'w92')) ?>" alt="" width="54" height="81" loading="lazy"><span><?= e($itemTitle) ?><small>★ <?= e(Ratingtwo($item['vote_average'] ?? 0)) ?></small></span></a>
+   <?php endforeach; ?>
+  </div></aside>
+ </div></div>
+ <nav class="breadcrumb" aria-label="Breadcrumb"><ul><li><a href="/">Home</a></li><li><a href="/tv">TV Shows</a></li><li><a href="/tv/<?= (int)$id ?>/<?= e($slug) ?>"><?= e($showName) ?></a></li><li aria-current="page">S<?= (int)$seasonNumber ?> E<?= (int)$episodeNumber ?></li></ul></nav>
+</main>
+<?php require __DIR__ . '/includes/footer.php'; ?>

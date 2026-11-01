@@ -7,18 +7,13 @@ $trendingtv = $APIbaseURL . $trendingtvweek . $api_key . $language;
 if (isset($_GET['page'])) {
     $trendingtv = $APIbaseURL . $trendingtvweek . $api_key . $language . "&page=" . $_GET['page'];
 }
-$arrContextOptions = array(
-    "ssl" => array(
-        "verify_peer" => false,
-        "verify_peer_name" => false,
-    ),
-);
-$ambil = file_get_contents($trendingtv, false, stream_context_create($arrContextOptions));
+
+$ambil = tmdb_fetch_url($trendingtv);
 $trndngtv = json_decode($ambil, true);
 /*----meta---*/
 $canonical = "trending-tv";
-$metatitle = 'Trending Tv-Shows This Week - '.$SiteTitle;
-$metadesc = 'Watch and download latest movies and TV Shows for free in HD streaming with multiple language subtitles.';
+$metatitle = 'Trending TV Shows This Week | TStream WATCH';
+$metadesc = 'Discover TV series trending this week, explore show information, seasons and episode guides on TStream WATCH.';
 ?>
 <?php include_once 'includes/header.php'; ?>
         <div id="container">
@@ -27,15 +22,15 @@ $metadesc = 'Watch and download latest movies and TV Shows for free in HD stream
                     <h1 class="Featured">Trending TV Shows</h1>
                     <div class="animation-2 items full arch"><?php foreach ($trndngtv["results"] as $data) : ?>
                         <article class="item">
-                            <div class="poster"><img src="<?php if ($data["poster_path"]) echo "https://image.tmdb.org/t/p/w185".$data["poster_path"]; else echo "/img/noposter.png"; ?>" alt="<?php echo $data["name"]; ?>">
+                            <div class="poster"><img src="<?php if ($data["poster_path"]) echo "https://image.tmdb.org/t/p/w185".$data["poster_path"]; else echo "/img/noposter.png"; ?>" alt="<?= e($data['name'] ?? '') ?>">
                                 <div class="rating"><i class="fa fa-star"></i> <?php echo Ratingtwo($data["vote_average"]); ?></div>
                                 <div class="mepo"> </div>
-                                <a href="/tv/<?php echo $data["id"]; ?>/<?php echo Slugify($data["name"]); ?>">
+                                <a href="/tv/<?= (int)($data['id'] ?? 0) ?>/<?php echo Slugify($data["name"]); ?>">
                                     <div class="see play3"></div>
                                 </a>
                             </div>
                             <div class="data">
-                                <h3><a href="/tv/<?php echo $data["id"]; ?>/<?php echo Slugify($data["name"]); ?>"><?php echo $data["name"]; ?></a></h3> <span><?php if ($data["first_air_date"]) echo $data["first_air_date"]; else echo "N/A"; ?></span>
+                                <h3><a href="/tv/<?= (int)($data['id'] ?? 0) ?>/<?php echo Slugify($data["name"]); ?>"><?= e($data['name'] ?? '') ?></a></h3> <span><?= e($data['first_air_date'] ?? 'N/A') ?></span>
                             </div>
                         </article><?php endforeach ?>
                     </div>

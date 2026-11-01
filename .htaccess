@@ -1,0 +1,39 @@
+Options -Indexes
+DirectoryIndex index.php
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+# Existing files/directories are served normally.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+# Clean movie, TV and episode URLs.
+RewriteRule ^movies/([0-9]+)/([^/]+)/?$ watchmovie.php?id=$1 [QSA,L]
+RewriteRule ^tv/([0-9]+)/([^/]+)/?$ seasons.php?id=$1 [QSA,L]
+RewriteRule ^episodes/([0-9]+)-([0-9]+)-([0-9]+)/([^/]+)/?$ watchep.php?id=$1&season=$2&episode=$3 [QSA,L]
+# Search: both /search?keyword=... and /search/keyword.
+RewriteRule ^search/([^/]+)/?$ search.php?keyword=$1 [QSA,L,B]
+RewriteRule ^search/?$ search.php [QSA,L]
+RewriteRule ^movies/?$ movies.php [QSA,L]
+RewriteRule ^tv/?$ tv.php [QSA,L]
+RewriteRule ^trending-movies/?$ trending-movies.php [QSA,L]
+RewriteRule ^trending-tv/?$ trending-tv.php [QSA,L]
+RewriteRule ^top-rated-movies/?$ top-rated-movies.php [QSA,L]
+RewriteRule ^top-rated-tv/?$ top-rated-tv.php [QSA,L]
+RewriteRule ^dmca/?$ dmca.php [QSA,L]
+RewriteRule ^privacy/?$ privacy.php [QSA,L]
+RewriteRule ^terms/?$ terms.php [QSA,L]
+RewriteRule ^sitemap_index\.xml$ sitemap_index.php [QSA,L]
+RewriteRule ^page-sitemap\.xml$ page-sitemap.php [QSA,L]
+RewriteRule ^movies-sitemap([1-5])\.xml$ movies-sitemap.php?page=$1 [QSA,L]
+RewriteRule ^tv-sitemap([1-5])\.xml$ tv-sitemap.php?page=$1 [QSA,L]
+</IfModule>
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json application/xml image/svg+xml
+</IfModule>
