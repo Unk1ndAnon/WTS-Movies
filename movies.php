@@ -3,10 +3,13 @@
 include_once 'includes/config.php';
 include_once 'includes/functions.php';
 
+$current_page = max(1, min(500, (int)($_GET['page'] ?? 1)));
+$paginationCanonical = true;
+
 // Latest Update SUB
 $popularmovies = $APIbaseURL . $movie . $popular . $api_key . $language;
 if (isset($_GET['page'])) {
-    $popularmovies = $APIbaseURL . $movie . $popular . $api_key . $language . "&page=" . max(1, min(500, (int)($_GET['page'] ?? 1)));
+    $popularmovies = $APIbaseURL . $movie . $popular . $api_key . $language . "&page=" . $current_page;
 }
 
 
@@ -39,15 +42,15 @@ $metadesc = 'Browse popular movies by release date and audience interest. Discov
                     <div class="pagination">
                         <?php
                         $wrap = "<ul class='pagination'>";
-                        $current_page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options'=>['default'=>1,'min_range'=>1,'max_range'=>500]]);
-                        $nextpage = $current_page + 1;
+                        // $current_page was normalized before the TMDB request.
+                        $nextpage = min(500, $current_page + 1);
                         $prevpage = $current_page - 1;
 
                         if ($current_page >= 2) {
                             $wrap .= "<li class='previous'><a href='?page=$prevpage' data-page='$prevpage'> < </a></li>";
                         }
 
-                        for ($i = $current_page - 1; $i <= $current_page + 4; $i++) {
+                        for ($i = $current_page - 1; $i <= min(500, $current_page + 4); $i++) {
                             if ($i == 0) {
                                 continue;
                             }
@@ -56,9 +59,10 @@ $metadesc = 'Browse popular movies by release date and audience interest. Discov
                                 $active = "active";
                             }
 
-                            $wrap .= "<li class='$active'><a href='?page=" . $i . "'>" . $i . "</a><li>";
+                            $wrap .= "<li class='$active'><a href='?page=" . $i . "'>" . $i . "</a></li>";
                         }
-                        echo $wrap . "<li class='next'><a href='?page=$nextpage' data-page='$nextpage'> > </a></li></ul>";
+                        if ($current_page < 500) { $wrap .= "<li class='next'><a href='?page=$nextpage' data-page='$nextpage' aria-label='Next page'>&gt;</a></li>"; }
+                        echo $wrap . "</ul>";
                         ?>
                     </div>
                 </div>
