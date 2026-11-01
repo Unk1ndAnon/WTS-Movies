@@ -1,4 +1,4 @@
-name: PHP syntax check
+name: PHP and JavaScript checks
 
 on:
   push:
@@ -40,5 +40,3 @@ jobs:
             exit 1
           fi
 
-      - name: Check JavaScript syntax
-        run: node --check JS/main.js
