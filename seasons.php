@@ -11,6 +11,11 @@ if (!$show || empty($show['id'])) { http_response_code(404); require __DIR__ . '
 $title = (string)($show['name'] ?? 'TV Series');
 $slug = slugify($title);
 $path = '/tv/' . $id . '/' . $slug;
+$requestedSlug = (string)($_GET['slug'] ?? '');
+if ($requestedSlug !== $slug) {
+    header('Location: ' . site_url(ltrim($path, '/')), true, 301);
+    exit;
+}
 $canonical = $path;
 $metatitle = $title . ' - Seasons & Episodes | ' . SITE_NAME;
 $overview = trim((string)($show['overview'] ?? ''));

@@ -11,7 +11,14 @@ if (!isset($canonical) || trim((string)$canonical) === '') {
     $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
     $canonical = trim($requestPath, '/');
 }
-$canonicalUrl = site_url((string)$canonical);
+$canonicalPath = (string)$canonical;
+if (!empty($paginationCanonical)) {
+    $canonicalPage = isset($current_page) ? (int)$current_page : 1;
+    if ($canonicalPage > 1 && strpos($canonicalPath, '?') === false) {
+        $canonicalPath .= '?page=' . $canonicalPage;
+    }
+}
+$canonicalUrl = site_url($canonicalPath);
 ?>
 <!doctype html>
 <html lang="en">

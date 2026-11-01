@@ -25,15 +25,15 @@ The site uses TMDB metadata and artwork. This product uses the TMDB API but is n
 
 ## Video embeds
 Two iframe providers are integrated:
-- MovieTV API: https://movietvapi.stream/embed/movie/{id} and https://movietvapi.stream/embed/tv/{id}/{season}/{episode}
+- MovieTV API: https://movietvapi.stream/embed/{id} and https://movietvapi.stream/embed/tv/{id}/{season}/{episode}
 - FMOV: https://fmov.my/embed/movie/{id} and https://fmov.my/embed/series/{id}/{season}/{episode}
 
-MovieTV is the initial selection. Visitors can switch to FMOV from the player controls. MovieTV has its own internal provider failover. Cross-origin iframe errors are not exposed to the parent page, so the website does not pretend it can automatically detect and switch between the two separate iframe hosts.
+MovieTV is the initial selection. Visitors can switch to FMOV from the player controls. The integration preserves season 0 (Specials) instead of silently converting it to season 1. MovieTV has its own internal provider failover. Cross-origin iframe errors are not exposed to the parent page, so the website does not pretend it can automatically detect and switch between the two separate iframe hosts.
 
 Both embed services are third-party services and can change availability or parameters independently of this repository.
 
 ## SEO and routes
-Clean public routes are mapped by .htaccess. Movie and TV episode pages render server-side metadata, canonical URLs, Open Graph/Twitter tags and relevant JSON-LD. Search pages are noindex,follow. The XML sitemap index includes static pages and paginated TMDB movie/TV sitemap endpoints.
+Clean public routes are mapped by .htaccess. Movie and TV episode pages render server-side metadata, canonical URLs, Open Graph/Twitter tags and relevant JSON-LD. Search pages are noindex,follow. The XML sitemap index reads TMDB's available popular-catalogue page counts and publishes one movie/TV sitemap per page (up to TMDB's 500-page limit). Sitemap entries do not guess last-modified dates from release dates or request time.
 
 ## Security notes
 - Legacy encrypted/eval player payload removed.
