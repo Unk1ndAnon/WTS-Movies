@@ -469,3 +469,204 @@ form.form-resp-ab .search-submit{
  .menuresp .menu ul.resp li a{min-height:44px;padding:9px;font-size:12px}
 }
 /* ===== END NAVIGATION REPAIR ===== */
+
+
+/* =========================================================
+   TSTREAM WATCH — CINEMATIC OTT REDESIGN v2.2
+   Inspired by the supplied Dribbble OTT Platform reference.
+   ========================================================= */
+:root{
+ --ott-bg:#08090d;
+ --ott-panel:#111319;
+ --ott-line:rgba(255,255,255,.12);
+ --ott-text:#f7f7f8;
+ --ott-muted:#b7bbc4;
+ --ott-accent:#EAB308;
+}
+html,body{background:var(--ott-bg);color:var(--ott-text)}
+body{line-height:1.5}
+#data-container{float:none;min-height:100vh;background:var(--ott-bg)}
+/* The header becomes a single integrated navigation bar. */
+header.responsive.tstream-header{
+ position:relative;z-index:1300;display:flex;align-items:center;gap:clamp(12px,2vw,30px);
+ width:100%;min-height:78px;padding:12px clamp(18px,4.4vw,68px);float:none;
+ background:rgba(7,8,12,.94);border-bottom:1px solid rgba(255,255,255,.1);
+ backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)
+}
+.home-page header.responsive.tstream-header{
+ position:absolute;top:0;left:0;right:0;background:linear-gradient(180deg,rgba(4,5,9,.82),rgba(4,5,9,.16));
+ border-bottom-color:rgba(255,255,255,.08);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)
+}
+.tstream-header .logo{flex:0 0 auto;width:auto;margin:0;padding:0;text-align:left}
+.tstream-header .logo img{display:block;width:174px;height:48px;object-fit:contain}
+.tstream-header .nav,.tstream-header .search{
+ display:none;flex:0 0 42px;place-items:center;width:42px;height:42px;padding:0;
+ border:1px solid var(--ott-line);border-radius:50%;background:rgba(255,255,255,.06);
+ color:#fff;font-size:16px;cursor:pointer
+}
+.tstream-header button:hover,.tstream-header button:focus-visible{color:var(--ott-accent);border-color:var(--ott-accent)}
+.tstream-header .menuresp{
+ display:block!important;position:static;flex:1 1 auto;float:none;width:auto;min-width:0;
+ background:transparent
+}
+.tstream-header .menuresp .menu{
+ position:static;min-height:0;width:100%;padding:0;background:transparent;box-shadow:none
+}
+.tstream-header .menuresp .menu ul.resp{
+ display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:clamp(14px,2.1vw,30px);
+ float:none;width:auto;margin:0;padding:0;border:0
+}
+.tstream-header .menuresp .menu ul.resp li{float:none;flex:0 0 auto;width:auto;padding:0;border:0}
+.tstream-header .menuresp .menu ul.resp li a{
+ display:inline-flex;align-items:center;width:auto;padding:8px 0;border:0;border-radius:0;
+ background:transparent;color:rgba(255,255,255,.82);font-size:13px;font-weight:650;white-space:nowrap
+}
+.tstream-header .menuresp .menu ul.resp li a[aria-current=page],
+.tstream-header .menuresp .menu ul.resp li a:hover{color:#fff}
+.tstream-header .menuresp .menu ul.resp li a[aria-current=page]:after{
+ content:"";position:absolute;bottom:-7px;left:0;right:0;height:2px;background:var(--ott-accent)
+}
+.tstream-header .menuresp .menu ul.resp li a{position:relative}
+.tstream-header .search_responsive{position:relative;flex:0 1 245px;width:245px;min-width:165px;float:none;margin:0}
+.tstream-header .search_responsive form.form-resp-ab{
+ display:flex!important;align-items:center;gap:0;width:100%;margin:0;padding:0;background:rgba(255,255,255,.08);
+ border:1px solid rgba(255,255,255,.1);border-radius:22px;overflow:hidden
+}
+.tstream-header .search_responsive form.form-resp-ab input[type=search]{
+ display:block;flex:1 1 auto;width:100%;min-width:0;max-width:none;margin:0;padding:10px 14px;
+ border:0;border-radius:22px;background:transparent;color:#fff;font-size:12px;box-shadow:none
+}
+.tstream-header .search_responsive form.form-resp-ab input::placeholder{color:rgba(255,255,255,.62)}
+.tstream-header .search_responsive .search-submit{
+ display:grid;flex:0 0 38px;place-items:center;width:38px;height:36px;padding:0;margin:2px;
+ border:0;border-radius:50%;background:var(--ott-accent);color:#171717;cursor:pointer
+}
+.tstream-header .search_responsive .live-search{
+ position:absolute;top:calc(100% + 8px);left:0;z-index:1400;width:100%;margin:0;transform:none
+}
+.tstream-header .search_responsive .live-search ul{
+ overflow:hidden;background:#14161d;border:1px solid var(--ott-line);border-radius:12px
+}
+.tstream-header .search_responsive .live-search ul li{float:none;width:100%;padding:0;border:0;border-bottom:1px solid var(--ott-line)}
+.tstream-header .search_responsive .live-search ul li a{display:block;padding:12px;color:#fff}
+.tstream-header .search_responsive .live-search ul li a:hover{color:var(--ott-accent)}
+/* Cinematic home spotlight. */
+.ott-home{width:100%;max-width:none!important;margin:0!important;padding:0!important}
+.ott-hero{
+ position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:space-between;
+ min-height:690px;width:100%;padding:145px clamp(22px,5.2vw,82px) 28px;overflow:hidden;
+ background:#090a0f
+}
+.ott-hero-backdrop{position:absolute;z-index:-3;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.ott-hero-shade{
+ position:absolute;z-index:-2;inset:0;
+ background:
+  linear-gradient(90deg,rgba(5,6,10,.97) 0%,rgba(5,6,10,.83) 27%,rgba(5,6,10,.38) 58%,rgba(5,6,10,.12) 100%),
+  linear-gradient(0deg,#08090d 0%,rgba(8,9,13,.82) 13%,rgba(8,9,13,.06) 55%,rgba(8,9,13,.27) 100%)
+}
+.ott-hero-copy{position:relative;z-index:1;width:min(610px,58vw);margin:0 0 44px; padding-top:12px}
+.ott-hero-kicker{display:inline-flex;align-items:center;gap:9px;margin-bottom:17px;color:var(--ott-accent);font-size:10px;font-weight:850;letter-spacing:2.2px}
+.ott-hero-kicker:before{content:"";width:24px;height:2px;background:var(--ott-accent)}
+.ott-hero-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;color:rgba(255,255,255,.76);font-size:12px;font-weight:650;letter-spacing:.35px}
+.ott-hero-meta span+span:before{content:"•";margin-right:12px;color:rgba(255,255,255,.42)}
+.ott-hero-meta .ott-hero-rating{color:#fff}
+.ott-hero-copy h1{
+ max-width:680px;margin:0 0 16px;color:#fff;font-size:clamp(36px,5vw,68px);
+ font-weight:850;line-height:.99;letter-spacing:-1.6px;text-transform:uppercase;
+ text-shadow:0 3px 24px rgba(0,0,0,.25)
+}
+.ott-hero-copy p{
+ max-width:465px;margin:0;color:rgba(255,255,255,.8);font-size:14px;font-weight:400;line-height:1.72;
+ display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden
+}
+.ott-hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:24px}
+.ott-watch-button,.ott-info-button{
+ display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:43px;padding:0 20px;
+ border-radius:8px;font-size:12px;font-weight:800;letter-spacing:.15px;transition:transform .2s,background .2s,border-color .2s
+}
+.ott-watch-button{background:var(--ott-accent);color:#151515;border:1px solid var(--ott-accent);box-shadow:0 7px 25px rgba(234,179,8,.16)}
+.ott-watch-button:hover{background:#facc15;color:#111;transform:translateY(-2px)}
+.ott-info-button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.52);color:#fff}
+.ott-info-button:hover{background:rgba(255,255,255,.17);color:#fff;border-color:#fff}
+.ott-hero-rail{position:relative;z-index:2;width:100%;margin-top:auto}
+.ott-section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin:0 0 13px}
+.ott-section-heading h2{margin:2px 0 0;color:#fff;font-size:clamp(18px,2vw,22px);font-weight:800;letter-spacing:-.25px;line-height:1.2}
+.ott-section-eyebrow{color:var(--ott-accent);font-size:9px;font-weight:850;letter-spacing:1.7px}
+.ott-section-heading>a{flex:none;color:rgba(255,255,255,.74);font-size:11px;font-weight:700}
+.ott-section-heading>a:hover{color:var(--ott-accent)}
+.ott-section-heading>a span{margin-left:5px;color:var(--ott-accent)}
+.ott-movie-track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-auto-columns:calc((100% - 5*14px)/6);gap:14px;width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 2px 10px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:rgba(234,179,8,.5) transparent}
+.ott-movie-card{
+ position:relative;isolation:isolate;display:block;min-width:0;aspect-ratio:1.48/1;overflow:hidden;
+ border:1px solid rgba(255,255,255,.12);border-radius:9px;background:#171920;color:#fff;
+ scroll-snap-align:start;box-shadow:0 8px 25px rgba(0,0,0,.22)
+}
+.ott-movie-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.ott-movie-card:hover img{transform:scale(1.07)}
+.ott-card-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.92),rgba(0,0,0,.04) 68%)}
+.ott-card-title{position:absolute;right:12px;bottom:11px;left:12px;color:#fff;font-size:12px;font-weight:800;line-height:1.25;text-shadow:0 1px 7px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ott-card-rating{position:absolute;top:9px;left:9px;padding:4px 7px;border-radius:5px;background:rgba(8,9,13,.78);color:#fff;font-size:10px;font-weight:800;backdrop-filter:blur(6px)}
+.ott-home-sections{width:min(1600px,100%);margin:0 auto;padding:30px clamp(22px,5.2vw,82px) 60px}
+.ott-home-row+.ott-home-row{margin-top:35px}
+.ott-tv-track .ott-movie-card{aspect-ratio:1.48/1}
+/* Apply the same polished card treatment to the catalogue pages. */
+.module{background:transparent;border:0;box-shadow:none}
+.module .content{padding:clamp(18px,3.5vw,52px)}
+.module .content .items.full .item{width:calc(100%/6);padding:9px}
+.module .content .items .item .poster{border:1px solid rgba(255,255,255,.08);border-radius:10px}
+.module .content .items .item .poster img{transition:transform .35s ease}
+.module .content .items .item .poster:hover img{transform:scale(1.045);filter:brightness(.75)}
+.module .content .items .item .data h3 a{font-weight:700}
+h1.Featured,h2.Featured{border-left-color:var(--ott-accent);background:linear-gradient(90deg,rgba(234,179,8,.13),transparent)}
+/* Tablet and compact laptop navigation. */
+@media(max-width:1180px){
+ header.responsive.tstream-header{gap:14px}
+ .tstream-header .nav{display:grid}
+ .tstream-header .menuresp{
+  display:none!important;position:absolute;top:calc(100% - 1px);left:18px;right:18px;z-index:1500;
+  width:auto;min-width:0;float:none;border:1px solid var(--ott-line);border-radius:0 0 13px 13px;
+  background:rgba(10,11,15,.98);box-shadow:0 20px 40px rgba(0,0,0,.4)
+ }
+ .tstream-header .menuresp.is-open{display:block!important}
+ .tstream-header .menuresp .menu{padding:14px;background:transparent}
+ .tstream-header .menuresp .menu ul.resp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+ .tstream-header .menuresp .menu ul.resp li{width:auto}
+ .tstream-header .menuresp .menu ul.resp li a{display:flex;justify-content:center;padding:11px 9px;border:1px solid var(--ott-line);border-radius:8px;background:rgba(255,255,255,.04);font-size:12px}
+ .tstream-header .search_responsive{flex:0 1 290px}
+}
+@media(max-width:760px){
+ header.responsive.tstream-header{min-height:66px;padding:8px 14px;gap:12px}
+ .tstream-header .logo{margin:0 auto}
+ .tstream-header .logo img{width:150px;height:42px}
+ .tstream-header .nav,.tstream-header .search{display:grid;flex-basis:40px;width:40px;height:40px}
+ .tstream-header .search_responsive{position:absolute;top:100%;right:12px;z-index:1450;width:min(360px,calc(100vw - 24px));min-width:0;margin:0}
+ .tstream-header .search_responsive form.form-resp-ab{display:none!important;margin:10px 0;padding:0}
+ .tstream-header .search_responsive form.form-resp-ab.is-open{display:flex!important}
+ .tstream-header .search_responsive .live-search{top:calc(100% + 4px)}
+ .tstream-header .menuresp{left:12px;right:12px}
+ .tstream-header .menuresp .menu ul.resp{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ott-hero{min-height:750px;padding:116px 18px 23px}
+ .ott-hero-backdrop{object-position:62% center}
+ .ott-hero-shade{background:linear-gradient(90deg,rgba(5,6,10,.93),rgba(5,6,10,.44)),linear-gradient(0deg,#08090d 0%,rgba(8,9,13,.72) 25%,rgba(8,9,13,.1) 100%)}
+ .ott-hero-copy{width:min(570px,100%);margin-bottom:35px;padding-top:16px}
+ .ott-hero-copy h1{font-size:clamp(34px,8.5vw,52px);letter-spacing:-.8px}
+ .ott-hero-copy p{font-size:13px;-webkit-line-clamp:4}
+ .ott-movie-track{grid-auto-columns:calc((100% - 2*10px)/3);gap:10px}
+ .ott-movie-card{aspect-ratio:.93/1}
+ .ott-card-title{right:8px;bottom:8px;left:8px;font-size:11px}
+ .ott-home-sections{padding:28px 18px 45px}
+ .module .content .items.full .item{width:calc(100%/3);padding:6px}
+}
+@media(max-width:430px){
+ .ott-hero{min-height:735px}
+ .ott-hero-meta{gap:8px;font-size:10px}
+ .ott-hero-meta span+span:before{margin-right:8px}
+ .ott-hero-actions{gap:8px;margin-top:18px}
+ .ott-watch-button,.ott-info-button{min-height:40px;padding:0 14px}
+ .ott-movie-track{grid-auto-columns:calc((100% - 10px)/2)}
+ .ott-movie-card{aspect-ratio:1.08/1}
+ .module .content .items.full .item{width:50%;padding:5px}
+}
+@media(prefers-reduced-motion:reduce){
+ .ott-movie-card img,.ott-watch-button{transition:none}
+}
