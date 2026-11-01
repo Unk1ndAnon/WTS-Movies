@@ -1,18 +1,25 @@
 <?php
 include_once 'includes/config.php';
 include_once 'includes/functions.php';
-// Get data
-$trendingmovies = $APIbaseURL . $trendingmovieweek . $api_key . $language;
-//handle errors
+// Fetch homepage catalogues through the shared, cached TMDB client.
+$homepageLanguage = 'en-US';
+if (isset($language) && is_string($language)) {
+    $languageParams = [];
+    parse_str(ltrim($language, '&?'), $languageParams);
+    if (
+        !empty($languageParams['language']) &&
+        is_string($languageParams['language']) &&
+        preg_match('/^[a-z]{2}(?:-[A-Z]{2})?$/', $languageParams['language'])
+    ) {
+        $homepageLanguage = $languageParams['language'];
+    }
+}
 
-$trendingtv = $APIbaseURL . $trendingtvweek . $api_key . $language;
-//handle errors
+$trndngmvs = tmdb_request('/trending/movie/week', ['language' => $homepageLanguage], 1800) ?? [];
+$trndngtv = tmdb_request('/trending/tv/week', ['language' => $homepageLanguage], 1800) ?? [];
 
-
-$ambil = tmdb_fetch_url($trendingmovies);
-$ambiltv = tmdb_fetch_url($trendingtv);
-$trndngmvs = json_decode($ambil ?: '{}', true) ?: ['results' => []];
-$trndngtv = json_decode($ambiltv ?: '{}', true) ?: ['results' => []];
+$trndngmvs['results'] = is_array($trndngmvs['results'] ?? null) ? $trndngmvs['results'] : [];
+$trndngtv['results'] = is_array($trndngtv['results'] ?? null) ? $trndngtv['results'] : [];
 /*----meta---*/
 $metatitle = 'Watch Movies and TV Shows Online | TStream WATCH';
 $metadesc = 'Discover trending movies, popular films and TV series. Explore new releases, ratings, cast details and episodes on TStream WATCH.';
