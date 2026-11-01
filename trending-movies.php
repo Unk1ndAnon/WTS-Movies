@@ -6,26 +6,17 @@ include_once 'includes/functions.php';
 // Latest Update SUB
 $trendingmovies = $APIbaseURL . $trendingmovieweek . $api_key . $language;
 if (isset($_GET['page'])) {
-    $trendingmovies = $APIbaseURL . $trendingmovieweek . $api_key . $language . "&page=" . $_GET['page'];
+    $trendingmovies = $APIbaseURL . $trendingmovieweek . $api_key . $language . "&page=" . max(1, min(500, (int)($_GET['page'] ?? 1)));
 }
 //handle errors
-$headers = get_headers($trendingmovies);
-if (stripos($headers[0], '40') !== false || stripos($headers[0], '50') !== false) {
-    include '404.php';
-    exit();
-}
-$arrContextOptions = array(
-    "ssl" => array(
-        "verify_peer" => false,
-        "verify_peer_name" => false,
-    ),
-);
-$ambil = file_get_contents($trendingmovies, false, stream_context_create($arrContextOptions));
-$trndngmvs = json_decode($ambil, true);
+
+
+$ambil = tmdb_fetch_url($trendingmovies);
+$trndngmvs = json_decode($ambil ?: '{}', true) ?: ['results' => []];
 /*----meta---*/
 $canonical = "trending-movies";
-$metatitle = 'Trending Movies This Week - '.$SiteTitle;
-$metadesc = 'Watch and download latest movies and TV Shows for free in HD streaming with multiple language subtitles.';
+$metatitle = 'Trending Movies This Week | TStream WATCH';
+$metadesc = 'Explore movies trending this week, discover popular releases and browse film information on TStream WATCH.';
 ?>
 <?php include_once 'includes/header.php'; ?>
         <div id="container">
@@ -34,22 +25,22 @@ $metadesc = 'Watch and download latest movies and TV Shows for free in HD stream
                     <h1 class="Featured">Trending Movies</h1>
                     <div class="animation-2 items full arch"><?php foreach ($trndngmvs["results"] as $data) : ?>
                         <article class="item">
-                            <div class="poster"><img src="<?php if ($data["poster_path"]) echo "https://image.tmdb.org/t/p/w185".$data["poster_path"]; else echo "/img/noposter.png"; ?>" alt="<?php echo $data["title"]; ?>">
+                            <div class="poster"><img src="<?php if ($data["poster_path"]) echo "https://image.tmdb.org/t/p/w185".$data["poster_path"]; else echo "/img/noposter.png"; ?>" alt="<?= e($data['title'] ?? '') ?>">
                                 <div class="rating"><i class="fa fa-star"></i> <?php echo Ratingtwo($data["vote_average"]); ?></div>
                                 <div class="mepo"> </div>
-                                <a href="/movies/<?php echo $data["id"]; ?>/<?php echo slugify($data["title"]); ?>">
+                                <a href="/movies/<?= (int)($data['id'] ?? 0) ?>/<?php echo slugify($data["title"]); ?>">
                                     <div class="see play3"></div>
                                 </a>
                             </div>
                             <div class="data">
-                                <h3><a href="/movies/<?php echo $data["id"]; ?>/<?php echo slugify($data["title"]); ?>"><?php echo $data["title"]; ?></a></h3> <span><?php if ($data["release_date"]) echo $data["release_date"]; else echo "N/A"; ?></span>
+                                <h3><a href="/movies/<?= (int)($data['id'] ?? 0) ?>/<?php echo slugify($data["title"]); ?>"><?= e($data['title'] ?? '') ?></a></h3> <span><?= e($data['release_date'] ?? 'N/A') ?></span>
                             </div>
                         </article><?php endforeach ?>
                     </div>
                     <div class="pagination">
                         <?php
                         $wrap = "<ul class='pagination'>";
-                        $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+                        $current_page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options'=>['default'=>1,'min_range'=>1,'max_range'=>500]]);
                         $nextpage = $current_page + 1;
                         $prevpage = $current_page - 1;
 

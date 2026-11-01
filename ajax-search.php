@@ -1,69 +1,28 @@
 <?php
-include_once 'includes/config.php';
+declare(strict_types=1);
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/functions.php';
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: private, max-age=60');
 
-if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-{
-if(empty($_GET['keyword'])){
-    
-$noresult = [
-      'content' => ''
-];
-echo json_encode($noresult);
-die();
+$keyword = trim((string)($_GET['keyword'] ?? ''));
+if (function_exists('mb_substr')) $keyword = mb_substr($keyword, 0, 80, 'UTF-8');
+else $keyword = substr($keyword, 0, 80);
+
+if (strlen($keyword) < 2) {
+    echo json_encode(['results'=>[]], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 
-$searchresultmv = $APIbaseURL.$searchmovie.$api_key."&query=".urlencode($_GET['keyword']);
-$searchresulttv = $APIbaseURL.$searchtv.$api_key."&query=".urlencode($_GET['keyword']);
-$arrContextOptions=array(
-    "ssl"=>array(
-          "verify_peer"=>false,
-          "verify_peer_name"=>false,
-      ),
-  ); 
-$ambil = file_get_contents($searchresultmv, false, stream_context_create($arrContextOptions));
-$ambiltv = file_get_contents($searchresulttv, false, stream_context_create($arrContextOptions));
-$searchresultmv = json_decode($ambil, true);
-$searchresulttv = json_decode($ambiltv, true);
-
-function slugify($text)
-{
-    // replace non letter or digits by -
-    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-
-    // transliterate
-    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-
-    // remove unwanted characters
-    $text = preg_replace('~[^-\w]+~', '', $text);
-
-    // trim
-    $text = trim($text, '-');
-
-    // remove duplicate -
-    $text = preg_replace('~-+~', '-', $text);
-
-    // lowercase
-    $text = strtolower($text);
-
-    if (empty($text)) {
-        return 'n-a';
-    }
-
-    return $text;
+$movies = tmdb_request('/search/movie', ['query'=>$keyword, 'page'=>1, 'include_adult'=>'false'], 120);
+$shows = tmdb_request('/search/tv', ['query'=>$keyword, 'page'=>1], 120);
+$results = [];
+foreach (array_slice($movies['results'] ?? [], 0, 6) as $item) {
+    if (empty($item['id']) || empty($item['title'])) continue;
+    $results[] = ['type'=>'movie','id'=>(int)$item['id'],'title'=>(string)$item['title'],'slug'=>slugify($item['title'])];
 }
-
-$div = '<ul style="margin-bottom: 0;">';
-foreach ($searchresultmv["results"] as $searchresultmv) :
-$div .= '<li><div class="tpe">movie</div><a href="/movies/'.$searchresultmv["id"].'/'.slugify($searchresultmv["title"]).'" class="ss-title">'.$searchresultmv["title"].'</a></li>';
-endforeach;
-foreach ($searchresulttv["results"] as $searchresulttv) :
-$div .= '<li><div class="tpe">tv</div><a href="/tv/'.$searchresulttv["id"].'/'.slugify($searchresulttv["name"]).'" class="ss-title">'.$searchresulttv["name"].'</a></li>';
-endforeach;
-$div .= '</ul>';
-
-$result = [
-      'content' => $div
-];
-echo json_encode($result);
+foreach (array_slice($shows['results'] ?? [], 0, 6) as $item) {
+    if (empty($item['id']) || empty($item['name'])) continue;
+    $results[] = ['type'=>'tv','id'=>(int)$item['id'],'title'=>(string)$item['name'],'slug'=>slugify($item['name'])];
 }
-?>
+echo json_encode(['results'=>$results], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

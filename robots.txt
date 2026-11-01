@@ -1,3 +1,4 @@
 User-agent: *
-Disallow: 
-Sitemap: https://new.wtsmovies.com/sitemap_index.xml
+Allow: /
+Disallow: /ajax-search.php
+Sitemap: https://tstream.watch/sitemap_index.xml

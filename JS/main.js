@@ -1,165 +1,94 @@
-//--------menu toggle btn------//
-var button = document.getElementById('menubtn');
-button.onclick = function() {
-    var div = document.getElementById('arch-menu');
-    if (div.style.display !== 'block') {
-        div.style.display = 'block';
-    } else {
-        div.style.display = 'none';
-    }
-};
-//--------search btn toggle------//
-var button = document.getElementById('searchbtn');
-button.onclick = function() {
-    var div = document.getElementById('form-search-resp');
-    if (div.style.display !== 'block') {
-        div.style.display = 'block';
-    } else {
-        div.style.display = 'none';
-    }
-};
-//--------ajax search------//
-$(document).ready(function() {
-    var id = -1;
-    $("#form-search-resp #keyword").keyup(function(e) {
-        var keyword = $(this).val();
-        var keyword_replace = $('#keyword_search_replace').val();
-        if (keyword_replace != keyword) {
-            preload(keyword, id);
-            $('#keyword_search_replace').val('');
-            $("#key_pres").val('');
+(() => {
+  'use strict';
+  const ready = (fn) => document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn) : fn();
+  ready(() => {
+    const menuButton = document.getElementById('menubtn');
+    const menu = document.getElementById('arch-menu');
+    const searchButton = document.getElementById('searchbtn');
+    const searchForm = document.getElementById('form-search-resp');
+    const searchInput = document.getElementById('keyword');
+    const suggestionBox = document.getElementById('header_search_autocomplete');
+
+    if (menuButton && menu) menuButton.addEventListener('click', () => {
+      const open = menu.style.display !== 'block';
+      menu.style.display = open ? 'block' : 'none';
+      menuButton.setAttribute('aria-expanded', String(open));
+    });
+    if (searchButton && searchForm) searchButton.addEventListener('click', () => {
+      const open = searchForm.style.display !== 'flex';
+      searchForm.style.display = open ? 'flex' : 'none';
+      searchButton.setAttribute('aria-expanded', String(open));
+      if (open && searchInput) searchInput.focus();
+    });
+
+    // Player source switching is explicit. Cross-origin iframe failures cannot be
+    // reliably observed by the parent page, so no false automatic failover is shown.
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('.player-source');
+      if (!button) return;
+      const iframe = document.getElementById('player');
+      const src = button.getAttribute('data-src');
+      if (!iframe || !src || !/^https:\/\/(fmov\.my|movietvapi\.stream)\//i.test(src)) return;
+      iframe.src = src;
+      document.querySelectorAll('.player-source').forEach((item) => {
+        const active = item === button;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+    });
+
+    if (searchInput && suggestionBox) {
+      let timer = 0;
+      let controller = null;
+      const hide = () => { suggestionBox.innerHTML = ''; suggestionBox.style.display = 'none'; };
+      const render = (items) => {
+        suggestionBox.replaceChildren();
+        if (!items.length) { hide(); return; }
+        const list = document.createElement('ul');
+        items.forEach((item) => {
+          const li = document.createElement('li');
+          const type = document.createElement('span');
+          type.className = 'tpe';
+          type.textContent = item.type === 'tv' ? 'TV' : 'Movie';
+          const link = document.createElement('a');
+          link.className = 'ss-title';
+          link.textContent = item.title;
+          link.href = '/' + (item.type === 'tv' ? 'tv' : 'movies') + '/' + Number(item.id) + '/' + encodeURIComponent(item.slug);
+          li.append(type, link);
+          list.append(li);
+        });
+        suggestionBox.append(list);
+        suggestionBox.style.display = 'block';
+      };
+      searchInput.addEventListener('input', () => {
+        window.clearTimeout(timer);
+        const query = searchInput.value.trim();
+        if (query.length < 2) { hide(); return; }
+        timer = window.setTimeout(async () => {
+          if (controller) controller.abort();
+          controller = new AbortController();
+          try {
+            const response = await fetch('/ajax-search.php?keyword=' + encodeURIComponent(query), {
+              headers: { 'Accept': 'application/json' }, signal: controller.signal
+            });
+            if (!response.ok) throw new Error('Search request failed');
+            const data = await response.json();
+            render(Array.isArray(data.results) ? data.results : []);
+          } catch (error) {
+            if (error.name !== 'AbortError') hide();
+          }
+        }, 250);
+      });
+      searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') hide();
+        if (event.key === 'Enter' && searchInput.value.trim().length >= 2) {
+          event.preventDefault();
+          window.location.href = '/search/' + encodeURIComponent(searchInput.value.trim().replace(/\s+/g, '-'));
         }
-    });
-    $("#form-search-resp #keyword").focus(function(e) {
-        var keyword = $(this).val();
-        preload(keyword, id);
-    });
-    $("#form-search-resp #keyword").blur(function() {
-        if ($("#header_search_autocomplete").is(':hover') === true) {} else {
-            var keyword = '';
-            preload(keyword, id);
-        }
-    });
-    $("#form-search-resp #keyword").keydown(function(e) {
-        var keyword = $(this).val();
-        var key_pres = $("#key_pres").val();
-        if (e.keyCode == 13) {
-            e.preventDefault();
-            if (key_pres != '') {
-                var alias = $('#link_alias').val();
-                window.location.href = base_url + '/movies/' + alias;
-            } else {
-                window.location.href = '/search/' + keyword;
-            }
-        }
-        if ($('#header_search_autocomplete_body:visible').length > 0) {
-            var items = $('#header_search_autocomplete_body').children();
-            var nextElement = null;
-            var current_index = -1;
-            event_id = $("#key_pres").val();
-            if (event_id != '') {
-                if (event_id.substring(0, 'header_search_autocomplete_item_'.length) == 'header_search_autocomplete_item_') {
-                    current_index = parseInt(event_id.replace('header_search_autocomplete_item_', ''));
-                    $('#header_search_autocomplete_body div').removeClass('focused');
-                }
-            }
-            if (e.keyCode == 38) {
-                e.preventDefault();
-                current_index = Math.max(0, current_index - 1);
-                nextElement = $('#header_search_autocomplete_item_' + current_index);
-            } else if (e.keyCode == 40) {
-                e.preventDefault();
-                current_index = Math.min(items.length - 1, current_index + 1);
-                nextElement = $('#header_search_autocomplete_item_' + current_index);
-            }
-            if (nextElement) {
-                nextElement.stop(true, true);
-                $('#header_search_autocomplete_item_' + current_index).focus();
-                $('#header_search_autocomplete_item_' + current_index).stop(true, true).addClass('focused');
-                $("#key_pres").val('header_search_autocomplete_item_' + current_index);
-                var link_alias = $('#header_search_autocomplete_item_' + current_index + ' a').attr('rel');
-                $("#link_alias").val(link_alias);
-                $("#keyword_search_replace").val(keyword);
-                id = current_index;
-            }
-        }
-    });
-});
-
-function preload(keyword, id) {
-    if (keyword.length >= 2) {
-        $(".load.search").show();
-        //$("#header_search_autocomplete .load").html(keyword);
+      });
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.search_responsive')) hide();
+      });
     }
-    $.ajax({
-        type: "get",
-        url: "/ajax-search.php",
-        dataType: 'json',
-        data: {
-            keyword: keyword,
-            id: id
-        },
-        success: function(data, response) {
-            $(".load.search").hide();
-            $("#header_search_autocomplete").html(data.content);
-        }
-    });
-}
-
-function do_search() {
-    var keyword = $("#form-search-resp.lap #keyword").val();
-    keyword = keyword.replace(/\s+/g, '-');
-    if (keyword.length >= 2) {
-        window.location.href = '/search/' + urlencode(keyword);
-    } else {
-        //$("#form-search-resp #keyword").focus();
-    }
-
-    return false;
-}
-
-function do_searchM() {
-    var keyword = $("#form-search-resp.mobi #keyword").val();
-    keyword = keyword.replace(/\s+/g, '-');
-    if (keyword.length >= 2) {
-        window.location.href = '/search/' + urlencode(keyword);
-    } else {
-        //$("#form-search-resp #keyword").focus();
-    }
-
-    return false;
-}
-
-//iframe src & btn
-$('#trailer').click(function () {
-    var s = $(this).data('src');
-    $("#trailer").css("display", "none");
-    $("#loading").css("display", "block");
-    $('#player').attr('src', s);
-    $('#player').load(function(){
-        $("#loading").css("display", "none");
-        $("#trailer").css("display", "none");
-        $("#watchm").css("display", "block");
-    });
-    $('body,html').animate({scrollTop: 0}, 400); return false;
-});
-$('#watchm').click(function () {
-    var s = $(this).data('src');
-    $("#watchm").css("display", "none");
-    $("#loading").css("display", "block");
-    $('#player').attr('src', s);
-    $('#player').load(function(){
-        $("#loading").css("display", "none");
-        $("#watchm").css("display", "none");
-        $("#trailer").css("display", "block");
-    });
-    $('body,html').animate({scrollTop: 0}, 400); return false;
-});
-$('#torrent').click(function () {
-    var s = $(this).data('src');
-    window.open(s, "_blank", "");
-});
-$('#subtitle').click(function () {
-    var s = $(this).data('src');
-    window.open(s, "_blank", "");
-});
+  });
+})();
