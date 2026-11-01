@@ -6,13 +6,32 @@ include_once 'includes/functions.php';
 $current_page = max(1, min(500, (int)($_GET['page'] ?? 1)));
 $paginationCanonical = true;
 
-$populartv = $APIbaseURL . $tv . $popular . $api_key . $language;
-if (isset($_GET['page'])) {
-    $populartv = $APIbaseURL . $tv . $popular . $api_key . $language . "&page=" . $current_page;
+// Load this catalogue through the shared TMDB client and private cache.
+$catalogueLanguage = 'en-US';
+if (isset($language) && is_string($language)) {
+    $languageParams = [];
+    parse_str(ltrim($language, '&?'), $languageParams);
+    if (
+        !empty($languageParams['language']) &&
+        is_string($languageParams['language']) &&
+        preg_match('/^[a-z]{2}(?:-[A-Z]{2})?$/', $languageParams['language'])
+    ) {
+        $catalogueLanguage = $languageParams['language'];
+    }
 }
 
-$ambil = tmdb_fetch_url($populartv);
-$pplrtv = json_decode($ambil ?: '{}', true) ?: ['results' => []];
+$catalogueData = tmdb_request(
+    '/tv/popular',
+    ['language' => $catalogueLanguage, 'page' => $current_page],
+    1800
+) ?? [];
+
+$pplrtv = [
+    'results' => is_array($catalogueData['results'] ?? null)
+        ? $catalogueData['results']
+        : []
+];
+
 /*----meta---*/
 $canonical = "tv";
 $metatitle = 'Popular TV Shows and Series | TStream WATCH';
