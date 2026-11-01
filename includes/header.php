@@ -46,7 +46,7 @@ $canonicalUrl = site_url($canonicalPath);
 <link rel="manifest" href="/favicon/site.webmanifest">
 <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
 <link rel="preconnect" href="https://api.themoviedb.org">
-<link rel="stylesheet" href="/CSS/style.css?v=2.0">
+<link rel="stylesheet" href="/CSS/style.css?v=2.1">
 <?php if (!empty($metaschema)) echo $metaschema; ?>
 </head>
 <body>

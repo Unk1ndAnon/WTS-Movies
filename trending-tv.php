@@ -6,13 +6,32 @@ include_once 'includes/functions.php';
 $current_page = max(1, min(500, (int)($_GET['page'] ?? 1)));
 $paginationCanonical = true;
 
-$trendingtv = $APIbaseURL . $trendingtvweek . $api_key . $language;
-if (isset($_GET['page'])) {
-    $trendingtv = $APIbaseURL . $trendingtvweek . $api_key . $language . "&page=" . $current_page;
+// Load this catalogue through the shared TMDB client and private cache.
+$catalogueLanguage = 'en-US';
+if (isset($language) && is_string($language)) {
+    $languageParams = [];
+    parse_str(ltrim($language, '&?'), $languageParams);
+    if (
+        !empty($languageParams['language']) &&
+        is_string($languageParams['language']) &&
+        preg_match('/^[a-z]{2}(?:-[A-Z]{2})?$/', $languageParams['language'])
+    ) {
+        $catalogueLanguage = $languageParams['language'];
+    }
 }
 
-$ambil = tmdb_fetch_url($trendingtv);
-$trndngtv = json_decode($ambil ?: '{}', true) ?: ['results' => []];
+$catalogueData = tmdb_request(
+    '/trending/tv/week',
+    ['language' => $catalogueLanguage, 'page' => $current_page],
+    1800
+) ?? [];
+
+$trndngtv = [
+    'results' => is_array($catalogueData['results'] ?? null)
+        ? $catalogueData['results']
+        : []
+];
+
 /*----meta---*/
 $canonical = "trending-tv";
 $metatitle = 'Trending TV Shows This Week | TStream WATCH';
