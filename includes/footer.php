@@ -13,6 +13,6 @@
         </footer>
     </div>
     <?php foreach (['analytics.php','direct-link-ad-code.php','pop-ad-code.php'] as $optionalInclude): $optionalPath=__DIR__.'/'.$optionalInclude; if (is_file($optionalPath)) include $optionalPath; endforeach; ?>
-    <script src="/JS/main.js?v=2.1" defer></script>
+    <script src="/JS/main.js?v=2.2" defer></script>
 </body>
 </html>
