@@ -9,17 +9,41 @@
     const searchInput = document.getElementById('keyword');
     const suggestionBox = document.getElementById('header_search_autocomplete');
 
-    if (menuButton && menu) menuButton.addEventListener('click', () => {
-      const open = menu.style.display !== 'block';
-      menu.style.display = open ? 'block' : 'none';
-      menuButton.setAttribute('aria-expanded', String(open));
-    });
-    if (searchButton && searchForm) searchButton.addEventListener('click', () => {
-      const open = searchForm.style.display !== 'flex';
-      searchForm.style.display = open ? 'flex' : 'none';
-      searchButton.setAttribute('aria-expanded', String(open));
-      if (open && searchInput) searchInput.focus();
-    });
+    if (menuButton && menu) {
+      const setMenuOpen = (open) => {
+        menu.classList.toggle('is-open', open);
+        menuButton.setAttribute('aria-expanded', String(open));
+      };
+
+      menuButton.addEventListener('click', () => {
+        setMenuOpen(!menu.classList.contains('is-open'));
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!menu.contains(event.target) && !menuButton.contains(event.target)) {
+          setMenuOpen(false);
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') setMenuOpen(false);
+      });
+    }
+    if (searchButton && searchForm) {
+      const setSearchOpen = (open) => {
+        searchForm.classList.toggle('is-open', open);
+        searchButton.setAttribute('aria-expanded', String(open));
+        if (open && searchInput) searchInput.focus();
+      };
+
+      searchButton.addEventListener('click', () => {
+        setSearchOpen(!searchForm.classList.contains('is-open'));
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') setSearchOpen(false);
+      });
+    }
 
     // Player source switching is explicit. Cross-origin iframe failures cannot be
     // reliably observed by the parent page, so no false automatic failover is shown.
