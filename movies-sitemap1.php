@@ -1,14 +1,3 @@
 <?php
-declare(strict_types=1);
-require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/functions.php';
-header('Content-Type: application/xml; charset=utf-8');
-header('Cache-Control: public, max-age=3600');
-$data = tmdb_request('/movie/popular', ['page'=>1], 3600) ?? ['results'=>[]];
-echo '<?xml version="1.0" encoding="UTF-8"?>';
-?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<?php foreach (($data['results'] ?? []) as $item): if (empty($item['id']) || empty($item['title'])) continue; $url='/movies/'.(int)$item['id'].'/'.slugify($item['title']); ?>
- <url><loc><?= e(site_url(ltrim($url,'/'))) ?></loc><lastmod><?= e(!empty($item['release_date']) ? gmdate('Y-m-d', strtotime($item['release_date'])) : gmdate('Y-m-d')) ?></lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>
-<?php endforeach; ?>
-</urlset>
+// Compatibility endpoint. The public XML route uses the dynamic, cached sitemap.
+require __DIR__ . '/movies-sitemap.php';

@@ -5,7 +5,7 @@ include_once 'includes/functions.php';
 
 $topratedtvshows = $APIbaseURL . $topratedtv . $api_key . $language;
 if (isset($_GET['page'])) {
-    $topratedtvshows = $APIbaseURL . $topratedtv . $api_key . $language . "&page=" . $_GET['page'];
+    $topratedtvshows = $APIbaseURL . $topratedtv . $api_key . $language . "&page=" . max(1, min(500, (int)($_GET['page'] ?? 1)));
 }
 //handle errors
 
@@ -40,7 +40,7 @@ $metadesc = 'Browse highly rated TV shows and series, with information about sea
                     <div class="pagination">
                         <?php
                         $wrap = "<ul class='pagination'>";
-                        $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+                        $current_page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options'=>['default'=>1,'min_range'=>1,'max_range'=>500]]);
                         $nextpage = $current_page + 1;
                         $prevpage = $current_page - 1;
 
