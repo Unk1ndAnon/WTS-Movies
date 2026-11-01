@@ -4,7 +4,7 @@ DirectoryIndex index.php
 RewriteEngine On
 RewriteBase /
 # Canonical HTTPS and host.
-RewriteCond %{HTTP_HOST} ^www\\.tstream\\.watch$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www\.tstream\.watch$ [NC,OR]
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://tstream.watch%{REQUEST_URI} [R=301,L,NE]
 # Existing files/directories are served normally.

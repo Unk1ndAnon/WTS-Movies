@@ -36,7 +36,6 @@ $canonicalUrl = site_url((string)$canonical);
 <meta name="twitter:description" content="<?= e($metadesc) ?>">
 <meta name="twitter:image" content="<?= e($metaimg) ?>">
 <link rel="icon" type="image/svg+xml" href="/img/icon.svg">
-<link rel="alternate icon" href="/favicon/favicon.ico">
 <link rel="manifest" href="/favicon/site.webmanifest">
 <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
 <link rel="preconnect" href="https://api.themoviedb.org">

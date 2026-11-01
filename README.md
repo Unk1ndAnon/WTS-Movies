@@ -19,7 +19,7 @@ This branch adapts the original GPL-3.0 WTS-Movies PHP project for https://tstre
 7. Verify the homepage, movie URL, TV show URL, episode URL and XML sitemap.
 
 ## TMDB configuration
-The API key is read from includes/config.local.php or the TMDB_API_KEY environment variable. It is not printed into frontend HTML by the updated helper. TMDB responses are cached in storage/cache to reduce requests. TLS certificate verification is enabled.
+The API key is read from includes/config.local.php or the TMDB_API_KEY environment variable. It is not printed into frontend HTML by the updated helper. TMDB responses are cached in a private directory outside the public web root to reduce requests. TLS certificate verification is enabled.
 
 The site uses TMDB metadata and artwork. This product uses the TMDB API but is not endorsed or certified by TMDB.
 
