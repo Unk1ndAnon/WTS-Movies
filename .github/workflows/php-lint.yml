@@ -17,7 +17,28 @@ jobs:
         with:
           php-version: '8.3'
       - name: Lint PHP files
-        run: find . -type f -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+        run: find . -type f -name '*.php' -not -path './vendor/*' -not -path './.git/*' -print0 | xargs -0 -r -n1 php -l
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: node --check JS/main.js
+      - name: Guard catalogue TMDB client usage
+        run: |
+          if grep -nE 'tmdb_fetch_url|file_get_contents\(.*api\.themoviedb\.org' index.php movies.php trending-movies.php top-rated-movies.php tv.php trending-tv.php top-rated-tv.php; then
+            echo "Legacy direct TMDB request found in a catalogue page."
+            exit 1
+          fi
+          for file in index.php movies.php trending-movies.php top-rated-movies.php tv.php trending-tv.php top-rated-tv.php; do
+            grep -q 'tmdb_request' "$file" || { echo "Missing shared TMDB client in $file"; exit 1; }
+          done
+      - name: Ensure private TMDB configuration is not tracked
+        run: |
+          if git ls-files --error-unmatch includes/config.local.php >/dev/null 2>&1; then
+            echo "Private TMDB config must not be committed."
+            exit 1
+          fi
 
       - name: Check JavaScript syntax
         run: node --check JS/main.js
