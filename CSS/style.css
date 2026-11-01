@@ -670,3 +670,280 @@ h1.Featured,h2.Featured{border-left-color:var(--ott-accent);background:linear-gr
 @media(prefers-reduced-motion:reduce){
  .ott-movie-card img,.ott-watch-button{transition:none}
 }
+
+
+/* =========================================================
+   TSTREAM WATCH — DRIBBBLE OTT REFERENCE REBUILD v2.3
+   Homepage composition follows the supplied OTT Platform shot:
+   integrated top navigation, large cinematic feature, left copy,
+   and a six-card Popular Collections shelf over the hero.
+   ========================================================= */
+:root{
+  --ott-bg:#08090d;
+  --ott-panel:#11141b;
+  --ott-line:rgba(255,255,255,.13);
+  --ott-text:#f7f7f8;
+  --ott-muted:#aeb4c0;
+  --ott-accent:#EAB308;
+}
+html,body{background:var(--ott-bg);color:var(--ott-text)}
+body{line-height:1.5}
+#data-container{float:none;min-height:100vh;background:var(--ott-bg)}
+#container.ott-home{width:100%;max-width:none;margin:0 auto;padding:0}
+
+/* Homepage navigation sits inside the cinematic canvas, not in a separate bar. */
+.home-page header.responsive.tstream-header{
+  position:absolute;top:0;left:0;right:0;z-index:1300;
+  display:flex;align-items:center;justify-content:space-between;gap:clamp(14px,2.4vw,38px);
+  width:100%;min-height:104px;padding:20px clamp(22px,5.4vw,88px);
+  float:none;background:linear-gradient(180deg,rgba(5,6,10,.82),rgba(5,6,10,.28));
+  border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none
+}
+.home-page .tstream-header .logo{flex:0 0 auto;width:auto;margin:0;padding:0;text-align:left}
+.home-page .tstream-header .logo img{display:block;width:174px;height:50px;object-fit:contain}
+.home-page .tstream-header .nav,
+.home-page .tstream-header .search{
+  display:none;flex:0 0 42px;place-items:center;width:42px;height:42px;padding:0;
+  border:1px solid var(--ott-line);border-radius:50%;background:rgba(255,255,255,.07);
+  color:#fff;font-size:16px;cursor:pointer
+}
+.home-page .tstream-header .menuresp{
+  display:block!important;position:static;flex:1 1 auto;float:none;width:auto;min-width:0;background:transparent
+}
+.home-page .tstream-header .menuresp .menu{
+  position:static;width:100%;min-height:0;padding:0;background:transparent;box-shadow:none
+}
+.home-page .tstream-header .menuresp .menu ul.resp{
+  display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:clamp(15px,2.25vw,34px);
+  float:none;width:auto;margin:0;padding:0;border:0
+}
+.home-page .tstream-header .menuresp .menu ul.resp li{float:none;flex:0 0 auto;width:auto;padding:0;border:0}
+.home-page .tstream-header .menuresp .menu ul.resp li a{
+  position:relative;display:inline-flex;align-items:center;width:auto;padding:9px 0;
+  border:0;border-radius:0;background:transparent;color:rgba(255,255,255,.82);
+  font-size:13px;font-weight:650;white-space:nowrap
+}
+.home-page .tstream-header .menuresp .menu ul.resp li a[aria-current=page],
+.home-page .tstream-header .menuresp .menu ul.resp li a:hover{color:#fff}
+.home-page .tstream-header .menuresp .menu ul.resp li a[aria-current=page]:after{
+  content:"";position:absolute;right:0;bottom:0;left:0;height:2px;background:var(--ott-accent)
+}
+.home-page .tstream-header .search_responsive{
+  position:relative;z-index:1350;flex:0 1 218px;width:218px;min-width:150px;margin:0;float:none
+}
+.home-page .tstream-header .search_responsive form.form-resp-ab{
+  display:flex!important;align-items:center;gap:0;width:100%;margin:0;padding:0;
+  overflow:hidden;border:1px solid rgba(255,255,255,.18);border-radius:24px;background:rgba(15,17,23,.48)
+}
+.home-page .tstream-header .search_responsive form.form-resp-ab input[type=search]{
+  display:block;flex:1 1 auto;width:100%;min-width:0;max-width:none;margin:0;padding:10px 14px;
+  border:0;border-radius:24px;background:transparent;color:#fff;font-size:12px;box-shadow:none
+}
+.home-page .tstream-header .search_responsive form.form-resp-ab input::placeholder{color:rgba(255,255,255,.65)}
+.home-page .tstream-header .search_responsive .search-submit{
+  display:grid;flex:0 0 36px;place-items:center;width:36px;height:34px;margin:2px;padding:0;
+  border:0;border-radius:50%;background:var(--ott-accent);color:#161616;cursor:pointer
+}
+.home-page .tstream-header .search_responsive .live-search{
+  position:absolute;top:calc(100% + 8px);left:0;z-index:1400;width:100%;margin:0;transform:none
+}
+.home-page .tstream-header .search_responsive .live-search ul{
+  overflow:hidden;border:1px solid var(--ott-line);border-radius:12px;background:#141720
+}
+
+/* Full-width feature backdrop and strong left-to-right cinematic contrast. */
+.ott-hero{
+  position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;
+  width:100%;min-height:clamp(790px,100svh,1080px);padding:150px clamp(22px,7.1vw,116px) 48px;
+  overflow:hidden;background:#090a0f
+}
+.ott-hero-backdrop{
+  position:absolute;z-index:-3;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 34%
+}
+.ott-hero-shade{
+  position:absolute;z-index:-2;inset:0;
+  background:
+    linear-gradient(90deg,rgba(5,6,10,.96) 0%,rgba(5,6,10,.84) 25%,rgba(5,6,10,.51) 48%,rgba(5,6,10,.08) 82%),
+    linear-gradient(0deg,#08090d 0%,rgba(8,9,13,.78) 12%,rgba(8,9,13,.06) 43%,rgba(8,9,13,.2) 100%)
+}
+.ott-hero-copy{
+  position:relative;z-index:1;width:min(560px,48vw);margin-top:auto;margin-bottom:clamp(54px,7vh,86px);
+  padding:0
+}
+.ott-hero-kicker{
+  display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;
+  color:var(--ott-accent);font-size:11px;font-weight:850;letter-spacing:2.3px;text-transform:uppercase
+}
+.ott-hero-kicker:before{content:"";width:25px;height:2px;background:var(--ott-accent)}
+.ott-hero-meta{
+  display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin:0 0 17px;
+  color:rgba(255,255,255,.78);font-size:12px;font-weight:650;letter-spacing:.35px
+}
+.ott-hero-meta>span+span:before{content:"•";margin-right:13px;color:rgba(255,255,255,.5)}
+.ott-hero-meta .ott-hero-rating{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:3px;
+  background:var(--ott-accent);color:#141414;font-weight:850
+}
+.ott-hero-meta .ott-hero-rating:before{content:none}
+.ott-hero-meta .ott-hero-rating strong{font-size:9px;letter-spacing:.3px}
+.ott-hero-copy h1{
+  max-width:620px;margin:0 0 17px;color:#fff;font-size:clamp(42px,5.25vw,76px);
+  font-weight:900;line-height:.98;letter-spacing:-1.7px;text-transform:uppercase;
+  text-shadow:0 3px 24px rgba(0,0,0,.35)
+}
+.ott-hero-copy p{
+  max-width:455px;margin:0;color:rgba(255,255,255,.83);font-size:14px;line-height:1.7;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden
+}
+.ott-hero-actions{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-top:25px}
+.ott-watch-button,.ott-info-button{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;padding:0 22px;
+  border-radius:4px;font-size:12px;font-weight:850;letter-spacing:.35px;
+  transition:transform .2s ease,background .2s ease,border-color .2s ease
+}
+.ott-watch-button{
+  border:1px solid var(--ott-accent);background:var(--ott-accent);color:#151515;
+  box-shadow:0 8px 25px rgba(234,179,8,.18)
+}
+.ott-watch-button:hover{transform:translateY(-2px);background:#facc15;color:#111}
+.ott-info-button{border:1px solid rgba(255,255,255,.62);background:rgba(255,255,255,.07);color:#fff}
+.ott-info-button:hover{border-color:#fff;background:rgba(255,255,255,.16);color:#fff}
+
+/* The Popular Collections cards are part of the feature composition, not a detached row. */
+.ott-collection-shelf{position:relative;z-index:2;width:100%;margin-top:auto}
+.ott-collection-heading,.ott-content-heading{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0 0 16px
+}
+.ott-collection-heading h2,.ott-content-heading h2{
+  margin:3px 0 0;color:#fff;font-size:clamp(21px,2.25vw,29px);font-weight:850;
+  letter-spacing:-.55px;line-height:1.15
+}
+.ott-section-eyebrow{color:var(--ott-accent);font-size:9px;font-weight:850;letter-spacing:1.8px}
+.ott-collection-heading>a,.ott-content-heading>a{
+  flex:none;color:rgba(255,255,255,.77);font-size:11px;font-weight:750
+}
+.ott-collection-heading>a:hover,.ott-content-heading>a:hover{color:var(--ott-accent)}
+.ott-collection-heading>a span,.ott-content-heading>a span{margin-left:6px;color:var(--ott-accent)}
+.ott-collection-grid{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(10px,1.3vw,20px);width:100%
+}
+.ott-collection-card{
+  position:relative;isolation:isolate;display:block;min-width:0;aspect-ratio:1.12/1;
+  overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:8px;
+  background:#171a22;color:#fff;box-shadow:0 9px 25px rgba(0,0,0,.25)
+}
+.ott-collection-card img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;
+  transition:transform .35s ease
+}
+.ott-collection-card:hover img{transform:scale(1.07)}
+.ott-collection-overlay{
+  position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.94),rgba(0,0,0,.02) 73%)
+}
+.ott-collection-info{position:absolute;right:12px;bottom:10px;left:12px;display:flex;flex-direction:column;gap:4px}
+.ott-collection-info strong{
+  overflow:hidden;color:#fff;font-size:12px;font-weight:850;line-height:1.25;
+  text-overflow:ellipsis;white-space:nowrap;text-shadow:0 1px 7px #000
+}
+.ott-collection-info small{color:rgba(255,255,255,.78);font-size:10px;font-weight:650}
+
+/* Additional movie and series rows continue below the screenshot-like first screen. */
+.ott-home-sections{
+  width:min(1600px,100%);margin:0 auto;padding:42px clamp(22px,5.4vw,88px) 72px
+}
+.ott-home-row+.ott-home-row{margin-top:45px}
+.ott-content-heading{margin-bottom:18px}
+.ott-content-heading h2{font-size:clamp(20px,2vw,26px)}
+.ott-poster-track{
+  display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 9*17px)/10);
+  gap:17px;width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 2px 13px;
+  scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:rgba(234,179,8,.5) transparent
+}
+.ott-poster-card{display:block;min-width:0;color:#fff;scroll-snap-align:start}
+.ott-poster-image{
+  position:relative;display:block;aspect-ratio:2/3;overflow:hidden;border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;background:#171a22
+}
+.ott-poster-image img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.ott-poster-card:hover .ott-poster-image img{transform:scale(1.055)}
+.ott-poster-rating{
+  position:absolute;top:8px;left:8px;padding:4px 6px;border-radius:4px;
+  background:rgba(7,8,11,.82);color:#fff;font-size:10px;font-weight:850
+}
+.ott-poster-card>strong{
+  display:block;overflow:hidden;margin-top:10px;color:#fff;font-size:12px;font-weight:750;
+  line-height:1.35;text-overflow:ellipsis;white-space:nowrap
+}
+.ott-poster-card>small{display:block;margin-top:3px;color:var(--ott-muted);font-size:10px}
+
+/* Leave catalogue/detail page styling intact; the reference rebuild is homepage-only. */
+@media(min-width:1181px){
+  .home-page .tstream-header .nav{display:none!important}
+  .home-page .tstream-header .menuresp{display:block!important}
+}
+@media(max-width:1180px){
+  .home-page header.responsive.tstream-header{min-height:86px;padding:15px 24px;gap:14px}
+  .home-page .tstream-header .nav{display:grid!important}
+  .home-page .tstream-header .menuresp{
+    display:none!important;position:absolute;top:calc(100% - 1px);left:18px;right:18px;z-index:1500;
+    width:auto;min-width:0;float:none;border:1px solid var(--ott-line);border-radius:0 0 13px 13px;
+    background:rgba(10,11,15,.98);box-shadow:0 20px 40px rgba(0,0,0,.4)
+  }
+  .home-page .tstream-header .menuresp.is-open{display:block!important}
+  .home-page .tstream-header .menuresp .menu{padding:14px;background:transparent}
+  .home-page .tstream-header .menuresp .menu ul.resp{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px
+  }
+  .home-page .tstream-header .menuresp .menu ul.resp li a{
+    display:flex;justify-content:center;padding:11px 9px;border:1px solid var(--ott-line);
+    border-radius:8px;background:rgba(255,255,255,.04);font-size:12px
+  }
+  .home-page .tstream-header .search_responsive{flex:0 1 220px}
+}
+@media(max-width:760px){
+  .home-page header.responsive.tstream-header{min-height:66px;padding:8px 14px;gap:12px}
+  .home-page .tstream-header .logo{margin:0 auto}
+  .home-page .tstream-header .logo img{width:150px;height:42px}
+  .home-page .tstream-header .nav,.home-page .tstream-header .search{
+    display:grid!important;flex-basis:40px;width:40px;height:40px
+  }
+  .home-page .tstream-header .search_responsive{
+    position:absolute;top:100%;right:12px;z-index:1450;width:min(360px,calc(100vw - 24px));min-width:0;margin:0
+  }
+  .home-page .tstream-header .search_responsive form.form-resp-ab{display:none!important;margin:10px 0;padding:0}
+  .home-page .tstream-header .search_responsive form.form-resp-ab.is-open{display:flex!important}
+  .home-page .tstream-header .menuresp{left:12px;right:12px}
+  .home-page .tstream-header .menuresp .menu ul.resp{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ott-hero{min-height:970px;padding:115px 18px 27px}
+  .ott-hero-backdrop{object-position:62% center}
+  .ott-hero-shade{
+    background:linear-gradient(90deg,rgba(5,6,10,.94),rgba(5,6,10,.4)),
+      linear-gradient(0deg,#08090d 0%,rgba(8,9,13,.8) 22%,rgba(8,9,13,.12) 100%)
+  }
+  .ott-hero-copy{width:min(560px,100%);margin-top:auto;margin-bottom:48px}
+  .ott-hero-copy h1{font-size:clamp(36px,9vw,54px);letter-spacing:-.9px}
+  .ott-hero-copy p{font-size:13px;-webkit-line-clamp:4}
+  .ott-collection-heading h2{font-size:22px}
+  .ott-collection-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+  .ott-collection-card{aspect-ratio:1/1}
+  .ott-collection-info{right:8px;bottom:8px;left:8px}
+  .ott-collection-info strong{font-size:10px}
+  .ott-collection-info small{font-size:9px}
+  .ott-home-sections{padding:32px 16px 52px}
+  .ott-poster-track{grid-auto-columns:calc((100% - 4*12px)/5);gap:12px}
+}
+@media(max-width:430px){
+  .ott-hero{min-height:920px;padding-right:14px;padding-left:14px}
+  .ott-hero-meta{gap:8px;font-size:10px}
+  .ott-hero-meta>span+span:before{margin-right:8px}
+  .ott-hero-actions{gap:8px;margin-top:18px}
+  .ott-watch-button,.ott-info-button{min-height:42px;padding:0 14px}
+  .ott-collection-heading{align-items:center}
+  .ott-collection-heading h2{font-size:20px}
+  .ott-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ott-poster-track{grid-auto-columns:calc((100% - 3*10px)/4);gap:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .ott-collection-card img,.ott-poster-image img,.ott-watch-button{transition:none}
+}
