@@ -14,6 +14,7 @@ $year = !empty($currentmovie['release_date']) ? substr((string)$currentmovie['re
 $slug = slugify($title);
 $path = '/movies/' . $id . '/' . $slug;
 $canonical = $path;
+$ogtype = 'video.movie';
 $metatitle = $title . ($year ? " ({$year})" : '') . ' - Watch on ' . SITE_NAME;
 $overview = trim((string)($currentmovie['overview'] ?? ''));
 $metadesc = $overview !== '' ? 'Watch ' . $title . ($year ? " ({$year})" : '') . ' online. ' . $overview : 'Explore details, cast, trailers and streaming options for ' . $title . ' on ' . SITE_NAME . '.';

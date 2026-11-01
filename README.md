@@ -13,7 +13,7 @@ This branch adapts the original GPL-3.0 WTS-Movies PHP project for https://tstre
 1. Upload the contents of this repository to the domain document root.
 2. Copy includes/config.local.example.php to includes/config.local.php.
 3. Edit includes/config.local.php and set your TMDB API key. Do not commit this private file.
-4. Ensure PHP can create/write storage/cache (the application creates it automatically; use permissions such as 0750 where possible).
+4. Ensure PHP can create/write a private tstream-watch-cache directory one level above the web root (the application creates it automatically; ensure the PHP user can write there).
 5. Enable Apache mod_rewrite, make sure the document root allows .htaccess overrides, and keep the included .htaccess.
 6. Point DNS for tstream.watch to your host and configure a valid SSL certificate.
 7. Verify the homepage, movie URL, TV show URL, episode URL and XML sitemap.

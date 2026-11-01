@@ -25,6 +25,7 @@ $episodeName = (string)($currentEpisode['name'] ?? 'Episode ' . $episodeNumber);
 $slug = slugify($showName);
 $path = '/episodes/' . $id . '-' . $seasonNumber . '-' . $episodeNumber . '/' . $slug . '-season-' . $seasonNumber . '-episode-' . $episodeNumber;
 $canonical = $path;
+$ogtype = 'video.episode';
 $metatitle = $showName . ' - Season ' . $seasonNumber . ' Episode ' . $episodeNumber . ': ' . $episodeName . ' | ' . SITE_NAME;
 $overview = trim((string)($currentEpisode['overview'] ?? $currenttv['overview'] ?? ''));
 $metadesc = $overview !== '' ? 'Watch ' . $showName . ' season ' . $seasonNumber . ' episode ' . $episodeNumber . '. ' . $overview : 'Watch ' . $episodeName . ', season ' . $seasonNumber . ' of ' . $showName . ' on ' . SITE_NAME . '.';

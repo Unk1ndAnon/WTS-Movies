@@ -46,5 +46,5 @@ $topratedmovie = 'movie/top_rated';
 $topratedtv = 'tv/top_rated';
 $videos = '/videos';
 
-$TMDB_CACHE_DIR = dirname(__DIR__) . '/storage/cache';
+$TMDB_CACHE_DIR = dirname(__DIR__, 2) . '/tstream-watch-cache';
 $TMDB_CACHE_TTL = 3600;

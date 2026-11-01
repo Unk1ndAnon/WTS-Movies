@@ -3,6 +3,10 @@ DirectoryIndex index.php
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
+# Canonical HTTPS and host.
+RewriteCond %{HTTP_HOST} ^www\\.tstream\\.watch$ [NC,OR]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://tstream.watch%{REQUEST_URI} [R=301,L,NE]
 # Existing files/directories are served normally.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
@@ -28,6 +32,9 @@ RewriteRule ^page-sitemap\.xml$ page-sitemap.php [QSA,L]
 RewriteRule ^movies-sitemap([1-5])\.xml$ movies-sitemap.php?page=$1 [QSA,L]
 RewriteRule ^tv-sitemap([1-5])\.xml$ tv-sitemap.php?page=$1 [QSA,L]
 </IfModule>
+<Files "config.local.php">
+Require all denied
+</Files>
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/functions.php';
 if (!isset($metatitle) || trim((string)$metatitle) === '') $metatitle = SITE_NAME . ' - Watch Movies & TV Shows';
 if (!isset($metadesc) || trim((string)$metadesc) === '') $metadesc = 'Discover movies and TV series on TStream WATCH. Explore trending titles, new releases and popular shows.';
 if (!isset($metaimg) || trim((string)$metaimg) === '') $metaimg = site_url('img/home.jpg');
